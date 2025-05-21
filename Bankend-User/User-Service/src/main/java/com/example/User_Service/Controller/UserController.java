@@ -43,7 +43,6 @@ public class UserController {
     @Autowired
     private JwtBlacklistService jwtBlacklistService;
 
-
     @Autowired
     DataSource dataSource;
     @Autowired
