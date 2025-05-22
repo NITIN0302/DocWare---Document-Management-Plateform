@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Sidebar } from "./Sidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUpload, faFolderPlus, faLock,faLockOpen} from "@fortawesome/free-solid-svg-icons";
+import {
+  faUpload,
+  faFolderPlus,
+  faLock,
+  faLockOpen,
+} from "@fortawesome/free-solid-svg-icons";
+import Modal from "./Modal";
 
 const Browse = () => {
   const [path, setPath] = useState([{ id: 0, name: "root" }]);
@@ -9,6 +15,7 @@ const Browse = () => {
   const [parentId, setParentId] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -24,9 +31,21 @@ const Browse = () => {
     return date.toLocaleDateString("en-US", options);
   }
 
-  const createFolder = () => {
-    
-  }
+  const createFolder = async () => {
+    try {
+        const response = await fetch(
+          `http://localhost:8081/FolderService/createFolder`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const result = await response.json();
+        setFolderData(result);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }};
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,16 +87,38 @@ const Browse = () => {
 
   return (
     <div className="h-[91%] w-full flex flex-wrap">
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Create Folder"
+      >
+        <div className="">
+          <label className="text-black mb-2">Folder Name : </label>
+          <input
+            className="w-[90%] py-1 px-2 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white"
+            placeholder="Enter Folder Name"
+          />
+          <div className="flex flex-wrap justify-end">
+            <button
+              className="bg-indigo-500 border mt-2 border-blue-500 px-2 py-1 rounded-md hover:shadow-lg hover:shadow-indigo-500/50 transition duration-500 shadow-none"
+              // onClick={}
+            >
+              Create
+            </button>
+          </div>
+        </div>
+      </Modal>
       <div className="w-[12%] md:w-[15%] bg-gray-50 pt-8 m-1 rounded-sm">
         <Sidebar />
       </div>
       <div className="bg-gray-200 text-black my-1 rounded-sm p-4 grow">
         <div className="flex flex-wrap justify-between border-b-1 border-gray-400">
           <h1 className="w-[90%] text-xl">Browse Your Folder</h1>
-          <div className="w-[6%] flex flex-wrpa justify-around">
+          <div className="w-[6%] flex flex-wrap justify-around">
             {parentId !== 0 ? (
               <FontAwesomeIcon
-                className="shadow-xl text-sm text-white p-1 rounded-full border border-blue-500  bg-blue-400"
+                className="cursor-pointer shadow-xl text-sm text-white p-1 rounded-full border border-blue-500  bg-blue-400"
+                onClick={() => setModalOpen(true)}
                 icon={faFolderPlus}
               />
             ) : (
@@ -85,7 +126,7 @@ const Browse = () => {
             )}
             {parentId !== 0 ? (
               <FontAwesomeIcon
-                className="shadow-xl text-sm text-white p-1 rounded-full border border-blue-500  bg-blue-400"
+                className="shadow-xl text-sm text-white p-1 rounded-full border border-blue-500 cursor-pointer bg-blue-400"
                 icon={faUpload}
               />
             ) : (
