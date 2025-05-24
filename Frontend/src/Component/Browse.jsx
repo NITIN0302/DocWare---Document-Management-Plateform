@@ -8,6 +8,7 @@ import {
   faLockOpen,
 } from "@fortawesome/free-solid-svg-icons";
 import Modal from "./Modal";
+import useCounterContext from "../States/userContext";
 
 const Browse = () => {
   const [path, setPath] = useState([{ id: 0, name: "root" }]);
@@ -16,6 +17,8 @@ const Browse = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [folderName, setFoldername] = useState("");
+  const { username } = useCounterContext();
 
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -33,19 +36,33 @@ const Browse = () => {
 
   const createFolder = async () => {
     try {
-        const response = await fetch(
-          `http://localhost:8081/FolderService/createFolder`
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+      const response = await fetch(
+        `http://localhost:8081/FolderService/createFolder`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: folderName,
+            parentId: parentId,
+            createdBy: username,
+            freeze: 0,
+          }),
         }
-        const result = await response.json();
-        setFolderData(result);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }};
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const result = await response.json();
+      setFolderData(result);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+    setModalOpen(false);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,7 +83,7 @@ const Browse = () => {
     };
 
     fetchData();
-  }, [parentId]);
+  }, [parentId, folderData]);
 
   const handleClick = (id, name) => {
     setParentId(id);
@@ -96,12 +113,15 @@ const Browse = () => {
           <label className="text-black mb-2">Folder Name : </label>
           <input
             className="w-[90%] py-1 px-2 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white"
+            onChange={(e) => {
+              setFoldername(e.target.value);
+            }}
             placeholder="Enter Folder Name"
           />
           <div className="flex flex-wrap justify-end">
             <button
               className="bg-indigo-500 border mt-2 border-blue-500 px-2 py-1 rounded-md hover:shadow-lg hover:shadow-indigo-500/50 transition duration-500 shadow-none"
-              // onClick={}
+              onClick={createFolder}
             >
               Create
             </button>
@@ -149,9 +169,7 @@ const Browse = () => {
             <div className="w-[10%] border-r border-black p-2">Uuid</div>
             <div className="w-[30%] border-r border-black p-2">Folder Name</div>
             <div className="w-[20%] border-r border-black p-2">Created By</div>
-            <div className="w-[30%] border-r border-black p-2">
-              Created Date
-            </div>
+            <div className="w-[30%] border-r border-black p-2">Created Date</div>
             <div className="w-[5%] p-2">Freeze</div>
           </div>
           {folderData.map((ele) => (
@@ -159,30 +177,30 @@ const Browse = () => {
               className="flex flex-wrap text-sm text-black bg-gray-300 border-b border-black"
               key={ele.id}
             >
-              <div className="w-[10%] border-r border-black p-2">
+              <div className="w-[10%] border-r border-black items-center p-2">
                 {ele.uuid}
               </div>
               <div
-                className="w-[30%] border-r border-black p-2 cursor-pointer"
+                className="w-[30%] border-r border-black items-center cursor-pointer p-2"
                 onClick={() => handleClick(ele.uuid, ele.name)}
               >
                 {ele.name}
               </div>
-              <div className="w-[20%] border-r border-black p-2">
+              <div className="w-[20%] border-r border-black items-center p-2">
                 {ele.createdBy}
               </div>
-              <div className="w-[30%] border-r border-black p-2">
+              <div className="w-[30%] border-r border-black items-center p-2">
                 {formatDate(ele.createdDate)}
               </div>
-              <div className="w-[10%] p-2 flex flex-wrap justify-center">
+              <div className="w-[10%] items-center flex flex-wrap justify-center p-2">
                 {ele.freeze == 0 ? (
                   <FontAwesomeIcon
-                    className="shadow-xl text-sm text-white p-1 rounded-full border border-blue-500  bg-blue-400"
+                    className="shadow-xl text-xs text-white p-1 rounded-full border border-blue-500  bg-blue-400"
                     icon={faLockOpen}
                   />
                 ) : (
                   <FontAwesomeIcon
-                    className="shadow-xl text-sm text-white p-1 rounded-full border border-blue-500  bg-blue-400"
+                    className="shadow-xl text-xs text-white p-1 rounded-full border border-blue-500  bg-blue-400"
                     icon={faLock}
                   />
                 )}

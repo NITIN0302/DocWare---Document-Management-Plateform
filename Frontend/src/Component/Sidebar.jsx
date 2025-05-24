@@ -2,16 +2,14 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome, faCompass, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { setPagecount } from "../features/userSlice";
+import useCounterContext from "../States/userContext";
 
 export const Sidebar = () => {
-  let activeState = useSelector((state) => state.user.pageCount)
+  const {activeState,setActiveState} = useCounterContext();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleNavigation = (route, state) => {
-    dispatch(setPagecount(state));
+    setActiveState(state);
     navigate(route);
   };
 

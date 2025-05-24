@@ -2,16 +2,15 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock, faLockOpen } from "@fortawesome/free-solid-svg-icons";
-import { useDispatch } from "react-redux";
-import { setUsername } from "../features/userSlice";
+import useCounterContext from "../States/userContext";
 
 export const Login = () => {
   const navigate = useNavigate();
-  const [userName, setUserName] = useState("");
+  const [userName, setUsername] = useState("");
   const [passWord, setPassword] = useState("");
   const [input, setInput] = useState("password");
   const [icons, setIcon] = useState(faLock);
-  const dispatch = useDispatch();
+  const {username,setUserName} = useCounterContext();
 
   const handleChange = (icons) => {
     if (icons == faLock) {
@@ -36,7 +35,9 @@ export const Login = () => {
     });
     if (response.ok) {
       navigate("/home");
-      dispatch(setUsername(userName));
+      setUsername("");
+      setPassword("");
+      setUserName(userName);
     } else {
       alert("Bad Credentials");
     }
@@ -58,7 +59,7 @@ export const Login = () => {
               />
             </div>
             <input
-              onChange={(e) => setUserName(e.target.value)}
+              onChange={(e) => setUsername(e.target.value)}
               className="md:w-[80%] bg-black text-white px-2 py-2 rounded-r-md focus:outline-none"
               placeholder="Enter Your Username"
             />

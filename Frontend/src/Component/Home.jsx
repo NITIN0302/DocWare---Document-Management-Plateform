@@ -3,16 +3,15 @@ import { Sidebar } from "./Sidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome, faCompass, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { useDispatch,useSelector } from "react-redux";
-import { setPagecount } from "../features/userSlice";
+import useCounterContext from "../States/userContext";
 
 const Home = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const {setActiveState} = useCounterContext();
 
   const handleNavigation = (route, state) => {
-    dispatch(setPagecount(state));
     navigate(route);
+    setActiveState(state);
   };
 
   return (
@@ -39,7 +38,7 @@ const Home = () => {
           </span>
         </div>
         <div
-          onClick={() => handleNavigation("/browse", 1)}
+          onClick={() => handleNavigation("/browse", 2)}
           className="rounded-md grid grid-cols-1 bg-white border-2 border-amber-50 shadow-md hover:scale-105 transition duration-300"
         >
           <div className="w-fit mt-2 mx-auto px-2 rounded-full shadow-lg items-center flex flex-wrap justify-center">
@@ -56,7 +55,7 @@ const Home = () => {
           </span>
         </div>
         <div
-          onClick={() => handleNavigation("/search", 2)}
+          onClick={() => handleNavigation("/search", 3)}
           className="rounded-md grid grid-cols-1 bg-white border-2 border-amber-50 shadow-md hover:scale-105 transition duration-300"
         >
           <div className="w-fit mt-2 mx-auto px-2 rounded-full shadow-lg items-center flex flex-wrap justify-center">
