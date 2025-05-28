@@ -9,7 +9,7 @@ public class NodeFolder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int uuid;
-    public String Name;
+    public String name;
     public int parentId;
     public String createdBy;
     @Temporal(TemporalType.TIMESTAMP)
@@ -30,11 +30,11 @@ public class NodeFolder {
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public int getParentId() {

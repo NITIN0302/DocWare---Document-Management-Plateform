@@ -5,5 +5,6 @@ import java.util.List;
 
 public interface FolderService extends JpaRepository<NodeFolder,Integer>
 {
+    List<NodeFolder> findByName(String Name);
     List<NodeFolder> findByParentId(int parentId);
 }

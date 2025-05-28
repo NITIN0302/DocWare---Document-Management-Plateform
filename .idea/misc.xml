@@ -6,6 +6,7 @@
       <list>
         <option value="$PROJECT_DIR$/Bankend-User/User-Service/pom.xml" />
         <option value="$PROJECT_DIR$/Backend_Folder/Folder-Service/pom.xml" />
+        <option value="$PROJECT_DIR$/Backend_Document/Backend_Document/pom.xml" />
       </list>
     </option>
   </component>

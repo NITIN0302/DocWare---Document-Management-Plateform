@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="Backend_Document" />
         <module name="Folder-Service" />
         <module name="User-Service" />
       </profile>
@@ -13,6 +14,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Backend_Document" options="-parameters" />
       <module name="Folder-Service" options="-parameters" />
       <module name="User-Service" options="-parameters" />
     </option>

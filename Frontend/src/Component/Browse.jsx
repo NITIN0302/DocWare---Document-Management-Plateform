@@ -64,6 +64,28 @@ const Browse = () => {
     setModalOpen(false);
   };
 
+  const freezeFolder = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8081/FolderService/freezeFolder/${id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const result = await response.json();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -172,10 +194,12 @@ const Browse = () => {
             <div className="w-[30%] border-r border-black p-2">Created Date</div>
             <div className="w-[5%] p-2">Freeze</div>
           </div>
-          {folderData.map((ele) => (
+          {folderData.map((ele, index) => (
             <div
-              className="flex flex-wrap text-sm text-black bg-gray-300 border-b border-black"
-              key={ele.id}
+              className={`${
+                index % 2 == 0 ? "bg-gray-250" : "bg-gray-100"
+              } hover:bg-white flex flex-wrap text-sm overflow-auto no-scrollbar text-black  border-b border-black`}
+              id={index}
             >
               <div className="w-[10%] border-r border-black items-center p-2">
                 {ele.uuid}
@@ -196,11 +220,13 @@ const Browse = () => {
                 {ele.freeze == 0 ? (
                   <FontAwesomeIcon
                     className="shadow-xl text-xs text-white p-1 rounded-full border border-blue-500  bg-blue-400"
+                    onClick={()=>{freezeFolder(ele.uuid)}}
                     icon={faLockOpen}
                   />
                 ) : (
                   <FontAwesomeIcon
                     className="shadow-xl text-xs text-white p-1 rounded-full border border-blue-500  bg-blue-400"
+                    onClick={()=>{freezeFolder(ele.uuid)}}
                     icon={faLock}
                   />
                 )}
