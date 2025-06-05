@@ -9,30 +9,40 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Modal from "./Modal";
 import useCounterContext from "../States/userContext";
+import Folder from "../SubComponent/folder";
+import Document from "../SubComponent/Document";
 
 const Browse = () => {
   const [path, setPath] = useState([{ id: 0, name: "root" }]);
   const [folderData, setFolderData] = useState([]);
+  const [docData, setDocData] = useState([]);
   const [parentId, setParentId] = useState(0);
+  const [selectedValue, setSelectedValue] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [folderName, setFoldername] = useState("");
+  const [docFol, setDocfol] = useState("F");
   const { username } = useCounterContext();
 
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    const options = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      timeZoneName: "short",
-    };
-    return date.toLocaleDateString("en-US", options);
-  }
+  
+
+  const getDocument = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8082/DocumentService/getDocument/${parentId}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const result = await response.json();
+      setDocData(result);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const createFolder = async () => {
     try {
@@ -64,21 +74,16 @@ const Browse = () => {
     setModalOpen(false);
   };
 
-  const freezeFolder = async (id) => {
+  const getFolder = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8081/FolderService/freezeFolder/${id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          }
-        }
+        `http://localhost:8081/FolderService/getFolder/${parentId}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       const result = await response.json();
+      setFolderData(result);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -87,30 +92,10 @@ const Browse = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:8081/FolderService/getFolder/${parentId}`
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const result = await response.json();
-        setFolderData(result);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    getFolder();
+    getDocument();
+  }, [parentId]);
 
-    fetchData();
-  }, [parentId, folderData]);
-
-  const handleClick = (id, name) => {
-    setParentId(id);
-    setPath([...path, { id: id, name: name }]);
-  };
 
   const handleRouting = (id) => {
     setParentId(id);
@@ -155,8 +140,8 @@ const Browse = () => {
       </div>
       <div className="bg-gray-200 text-black my-1 rounded-sm p-4 grow">
         <div className="flex flex-wrap justify-between border-b-1 border-gray-400">
-          <h1 className="w-[90%] text-xl">Browse Your Folder</h1>
-          <div className="w-[6%] flex flex-wrap justify-around">
+          <h1 className="w-fit text-xl">Browse Your Folder</h1>
+          <div className="w-fit flex flex-wrap justify-around">
             {parentId !== 0 ? (
               <FontAwesomeIcon
                 className="cursor-pointer shadow-xl text-sm text-white p-1 rounded-full border border-blue-500  bg-blue-400"
@@ -176,6 +161,23 @@ const Browse = () => {
             )}
           </div>
         </div>
+        <div className="mt-2 flex flex-wrap justify-end">
+          <select
+            className="border-2 mr-2 w-40 border-black rounded-md"
+            onChange={(e) => setSelectedValue(e.target.value)}
+          >
+            <option value="F">Folder</option>
+            <option value="D">Document</option>
+          </select>
+          <button
+            onClick={() => {
+              setDocfol(selectedValue);
+            }}
+            className="border border-blue-500 bg-blue-500 px-4 rounded-md text-white "
+          >
+            Go
+          </button>
+        </div>
         {path.map((ele) => (
           <p
             className="hover:underline inline text-xs my-1 cursor-pointer text-blue-500"
@@ -186,54 +188,11 @@ const Browse = () => {
             /{ele.name}
           </p>
         ))}
-        <div className="border border-black rounded-t-md" id="folderData">
-          <div className="flex flex-wrap text-white bg-blue-500 rounded-t-md">
-            <div className="w-[10%] border-r border-black p-2">Uuid</div>
-            <div className="w-[30%] border-r border-black p-2">Folder Name</div>
-            <div className="w-[20%] border-r border-black p-2">Created By</div>
-            <div className="w-[30%] border-r border-black p-2">Created Date</div>
-            <div className="w-[5%] p-2">Freeze</div>
-          </div>
-          {folderData.map((ele, index) => (
-            <div
-              className={`${
-                index % 2 == 0 ? "bg-gray-250" : "bg-gray-100"
-              } hover:bg-white flex flex-wrap text-sm overflow-auto no-scrollbar text-black  border-b border-black`}
-              id={index}
-            >
-              <div className="w-[10%] border-r border-black items-center p-2">
-                {ele.uuid}
-              </div>
-              <div
-                className="w-[30%] border-r border-black items-center cursor-pointer p-2"
-                onClick={() => handleClick(ele.uuid, ele.name)}
-              >
-                {ele.name}
-              </div>
-              <div className="w-[20%] border-r border-black items-center p-2">
-                {ele.createdBy}
-              </div>
-              <div className="w-[30%] border-r border-black items-center p-2">
-                {formatDate(ele.createdDate)}
-              </div>
-              <div className="w-[10%] items-center flex flex-wrap justify-center p-2">
-                {ele.freeze == 0 ? (
-                  <FontAwesomeIcon
-                    className="shadow-xl text-xs text-white p-1 rounded-full border border-blue-500  bg-blue-400"
-                    onClick={()=>{freezeFolder(ele.uuid)}}
-                    icon={faLockOpen}
-                  />
-                ) : (
-                  <FontAwesomeIcon
-                    className="shadow-xl text-xs text-white p-1 rounded-full border border-blue-500  bg-blue-400"
-                    onClick={()=>{freezeFolder(ele.uuid)}}
-                    icon={faLock}
-                  />
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+        {docFol == "F" ? (
+          <Folder folderData = {folderData} parentId={parentId} setParentId={setParentId}  setPath={setPath} path={path}/>
+        ) : (
+          <Document docData={docData} parentId={parentId}/>
+        )}
       </div>
     </div>
   );

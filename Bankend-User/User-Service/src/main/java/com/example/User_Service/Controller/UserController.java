@@ -55,7 +55,7 @@ public class UserController {
         try {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         } catch (AuthenticationException ex) {
-            resultResponse.setStatus("1");
+            resultResponse.setStatus("0");
             resultResponse.setErrorCode("101012");
             resultResponse.setMessage("Invalid User Password");
             return ResponseEntity.ok(resultResponse);
@@ -71,7 +71,7 @@ public class UserController {
                 : new ArrayList<>();
 
         LoginResponse response = new LoginResponse(jwtToken, userDetails.getUsername(), roles);
-        resultResponse.setStatus("0");
+        resultResponse.setStatus("1");
         resultResponse.setErrorCode("101012");
         resultResponse.setMessage("Success");
         resultResponse.setData(response);
@@ -112,6 +112,22 @@ public class UserController {
         userDetailsManager.createUser(user);
         response = new ResultResponse("1", "User Created Succesfully", "");
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/validateToken")
+    public ResponseEntity<?> validateToken(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7);
+        ResultResponse result = new ResultResponse();
+        if (token != null && jwtUtils.validateJwtToken(token)) {
+            result.setStatus("1");
+            result.setErrorCode("101013");
+            result.setMessage("Valid Token");
+        } else {
+            result.setStatus("0");
+            result.setErrorCode("101014");
+            result.setMessage("Invalid Token");
+        }
+        return ResponseEntity.ok(result);
     }
 
 
