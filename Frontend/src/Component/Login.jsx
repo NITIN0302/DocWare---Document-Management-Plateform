@@ -33,10 +33,12 @@ export const Login = () => {
         password: passWord,
       })
     });
+    const result = await response.json();
     if (response.ok) {
       navigate("/home");
       setUsername("");
       setPassword("");
+      localStorage.setItem("Token",result.data.jwtToken)
       setUserName(userName);
     } else {
       alert("Bad Credentials");

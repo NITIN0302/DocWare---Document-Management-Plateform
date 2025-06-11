@@ -9,7 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Modal from "./Modal";
 import useCounterContext from "../States/userContext";
-import Folder from "../SubComponent/folder";
+import Folder from "../SubComponent/Folder";
 import Document from "../SubComponent/Document";
 
 const Browse = () => {
@@ -25,12 +25,16 @@ const Browse = () => {
   const [docFol, setDocfol] = useState("F");
   const { username } = useCounterContext();
 
-  
-
   const getDocument = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8082/DocumentService/getDocument/${parentId}`
+        `http://localhost:8082/DocumentService/getDocument/${parentId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+          },
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -52,6 +56,7 @@ const Browse = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("Token")}`,
           },
           body: JSON.stringify({
             name: folderName,
@@ -77,7 +82,13 @@ const Browse = () => {
   const getFolder = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8081/FolderService/getFolder/${parentId}`
+        `http://localhost:8081/FolderService/getFolder/${parentId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+          },
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -96,7 +107,6 @@ const Browse = () => {
     getDocument();
   }, [parentId]);
 
-
   const handleRouting = (id) => {
     setParentId(id);
     let data = [];
@@ -107,6 +117,7 @@ const Browse = () => {
       }
     }
     setPath(data);
+    setDocfol("F");
   };
 
   return (
@@ -144,7 +155,7 @@ const Browse = () => {
           <div className="w-fit flex flex-wrap justify-around">
             {parentId !== 0 ? (
               <FontAwesomeIcon
-                className="cursor-pointer shadow-xl text-sm text-white p-1 rounded-full border border-blue-500  bg-blue-400"
+                className="cursor-pointer shadow-xl text-sm text-white mr-2 p-1 rounded-full border border-blue-500  bg-blue-400"
                 onClick={() => setModalOpen(true)}
                 icon={faFolderPlus}
               />
@@ -166,7 +177,7 @@ const Browse = () => {
             className="border-2 mr-2 w-40 border-black rounded-md"
             onChange={(e) => setSelectedValue(e.target.value)}
           >
-            <option value="F">Folder</option>
+            <option default value="F">Folder</option>
             <option value="D">Document</option>
           </select>
           <button
@@ -189,9 +200,15 @@ const Browse = () => {
           </p>
         ))}
         {docFol == "F" ? (
-          <Folder folderData = {folderData} parentId={parentId} setParentId={setParentId}  setPath={setPath} path={path}/>
+          <Folder
+            folderData={folderData}
+            parentId={parentId}
+            setParentId={setParentId}
+            setPath={setPath}
+            path={path}
+          />
         ) : (
-          <Document docData={docData} parentId={parentId}/>
+          <Document docData={docData} parentId={parentId} />
         )}
       </div>
     </div>

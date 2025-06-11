@@ -6,6 +6,8 @@ import { Login } from "./Component/Login";
 import Home from "./Component/Home";
 import Browse from "./Component/Browse";
 import Search from "./Component/Search";
+import Recycle from "./Component/Recycle";
+import GetDocument from "./DocumentViewer/GetDocument"
 import { UserContextProvider } from "./States/userContext";
 
 function App() {
@@ -31,6 +33,8 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/browse" element={<Browse />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/recycle" element={<Recycle />} />
+            <Route path="/viewDocument" element={<GetDocument />} />
           </Routes>
         </div>
       </Router>

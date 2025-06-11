@@ -1,6 +1,7 @@
 package com.example.Folder_Service.Entity;
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "SDM_NODE_FOLDER")
@@ -15,7 +16,15 @@ public class NodeFolder {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
     public int freeze;
+    @Transient
+    private List<Integer> roles;
 
+    public List<Integer> getRoles() {
+        return roles;
+    }
+    public void setRoles(List<Integer> roles) {
+        this.roles = roles;
+    }
     @PrePersist
     protected void onCreate() {
         createdDate = new Date();

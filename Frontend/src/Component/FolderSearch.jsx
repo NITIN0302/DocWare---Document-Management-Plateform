@@ -26,6 +26,9 @@ const FolderSearch = () => {
         `http://localhost:8081/FolderService/getFolderByName/${folderName}`,
         {
           method: "POST",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("Token")}`,
+          },
         }
       );
       if (!response.ok) {
@@ -41,12 +44,14 @@ const FolderSearch = () => {
   };
 
   const getFolderById = async () => {
-    alert(folderId);
     try {
       const response = await fetch(
         `http://localhost:8081/FolderService/getFolderById/${folderId}`,
         {
           method: "POST",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("Token")}`,
+          },
         }
       );
       if (!response.ok) {
