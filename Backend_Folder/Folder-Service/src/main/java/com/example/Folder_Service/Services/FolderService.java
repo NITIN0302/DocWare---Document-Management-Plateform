@@ -1,10 +1,18 @@
 package com.example.Folder_Service.Services;
 import com.example.Folder_Service.Entity.NodeFolder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;
+import org.springframework.http.ResponseEntity;
 
-public interface FolderService extends JpaRepository<NodeFolder,Integer>
-{
-    List<NodeFolder> findByName(String Name);
-    List<NodeFolder> findByParentId(int parentId);
+import java.util.List;
+import java.util.Optional;
+
+public interface FolderService{
+    List<NodeFolder>  getFolderByName(String name);
+
+    NodeFolder createFolder(NodeFolder nodefolder);
+
+    List<NodeFolder> getFolder(int parentId);
+
+    Optional<NodeFolder> getFolderById(int id);
 }

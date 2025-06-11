@@ -7,7 +7,7 @@ import com.example.Document_Service.Backend_Document.FileModule.FileStreamHandle
 import com.example.Document_Service.Backend_Document.Pojo.GetDocument;
 import com.example.Document_Service.Backend_Document.Pojo.UploadResponse;
 import com.example.Document_Service.Backend_Document.Services.ConfigService;
-import com.example.Document_Service.Backend_Document.Services.DocumentService;;
+import com.example.Document_Service.Backend_Document.Services.DocumentService;
 import com.example.Document_Service.Backend_Document.repository.DocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

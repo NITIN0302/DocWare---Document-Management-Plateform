@@ -34,7 +34,7 @@ public class FolderController {
         String token = request.getHeader("Authorization");
         ResultResponse response = validateUser.validateToken(token).getBody();
         if (response.getStatus().equalsIgnoreCase("1")) {
-            List<NodeFolder> folders = folderService.findByName(name);
+            List<NodeFolder> folders = folderService.getFolderByName(name);
             return ResponseEntity.ok(folders);
         }
         else{
@@ -48,12 +48,12 @@ public class FolderController {
         String token = request.getHeader("Authorization");
         ResultResponse responseResult = validateUser.validateToken(token).getBody();
         if (responseResult.getStatus().equalsIgnoreCase("1")) {
-            List<NodeFolder> folders = folderService.findByName(nodeFolder.getName());
+            List<NodeFolder> folders = folderService.getFolderByName(nodeFolder.getName());
             if (!folders.isEmpty()) {
                 response = new CreateFolder(0, "Folder Already Exists", "", folders);
                 return ResponseEntity.ok(response);
             }
-            NodeFolder newFolder = folderService.save(nodeFolder);
+            NodeFolder newFolder = folderService.createFolder(nodeFolder);
             FolderInfo fm = new FolderInfo(1, newFolder.getUuid());
             response = new CreateFolder(1, "Folder Created Successfully", "", fm);
             return ResponseEntity.ok(response);
@@ -67,7 +67,7 @@ public class FolderController {
         String token = request.getHeader("Authorization");
         ResultResponse response = validateUser.validateToken(token).getBody();
         if (response.getStatus().equalsIgnoreCase("1")) {
-            List<NodeFolder> folders = folderService.findByParentId(parentId);
+            List<NodeFolder> folders = folderService.getFolder(parentId);
             return ResponseEntity.ok(folders);
         } else {
             return ResponseEntity.ok(response);
@@ -80,7 +80,7 @@ public class FolderController {
         ResultResponse response = validateUser.validateToken(token).getBody();
         Optional<NodeFolder> folder;
         if (response.getStatus().equalsIgnoreCase("1")) {
-            folder = folderService.findById(id);
+            folder = folderService.getFolderById(id);
         } else {
             return ResponseEntity.ok(response);
         }
@@ -95,10 +95,10 @@ public class FolderController {
         String token = request.getHeader("Authorization");
         ResultResponse response = validateUser.validateToken(token).getBody();
         if (response.getStatus().equalsIgnoreCase("1")) {
-            Optional<NodeFolder> folder = folderService.findById(id);
+            Optional<NodeFolder> folder = folderService.getFolderById(id);
             int freezeStatus = folder.get().getFreeze();
             folder.get().setFreeze(freezeStatus == 1 ? 0 : 1);
-            folderService.save(folder.get());
+            folderService.createFolder(folder.get());
             if (freezeStatus == 1) {
                 resultset = new Response(1, "Folder is UnFreezed", "");
             } else {
