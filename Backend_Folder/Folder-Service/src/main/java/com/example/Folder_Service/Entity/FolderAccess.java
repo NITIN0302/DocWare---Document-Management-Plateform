@@ -1,10 +1,8 @@
 package com.example.Folder_Service.Entity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "SDM_ACCESS_RIGHTS")
 public class FolderAccess {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -17,12 +17,12 @@ public class NodeFolder {
     private Date createdDate;
     public int freeze;
     @Transient
-    private List<Integer> roles;
+    private List<String> roles;
 
-    public List<Integer> getRoles() {
+    public List<String> getRoles() {
         return roles;
     }
-    public void setRoles(List<Integer> roles) {
+    public void setRoles(List<String> roles) {
         this.roles = roles;
     }
     @PrePersist
