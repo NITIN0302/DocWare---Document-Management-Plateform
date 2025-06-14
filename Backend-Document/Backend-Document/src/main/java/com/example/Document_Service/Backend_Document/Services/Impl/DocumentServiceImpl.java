@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -108,6 +109,42 @@ public class DocumentServiceImpl implements DocumentService {
                     }
                 }
 
+            }
+        }
+        return accessedDocument;
+    }
+
+    @Override
+    public List<NodeDocument> getDocumentByName(String username, String docname) {
+        List<NodeDocument> allDocument = documentRepository.getDocumentByName(docname);
+        List<NodeDocument> accessedDocument = new ArrayList<NodeDocument>();
+        List<String> userRoles = userRole.getRole(username);
+        if (userRoles.contains("ROLE_ADMIN")) {
+            return allDocument;
+        } else {
+            for (NodeDocument nd : allDocument) {
+                List<DocumentAccess> accessRights = roleService.getAccessByuuid(nd.getUuid());
+                for (DocumentAccess fa : accessRights) {
+                    if (userRoles.contains(fa.getRole())) {
+                        accessedDocument.add(nd);
+                    }
+                }
+
+            }
+        }
+        return accessedDocument;
+    }
+
+    @Override
+    public List<NodeDocument> getDocumentByUuid(String username, Long uuid) {
+        Optional<NodeDocument> document = documentRepository.findById(uuid);
+        List<NodeDocument> accessedDocument = new ArrayList<NodeDocument>();
+        List<String> userRoles = userRole.getRole(username);
+        List<DocumentAccess> da = roleService.getAccessByuuid(document.get().getUuid());
+        for (DocumentAccess documentAccess : da) {
+            if (userRoles.contains(documentAccess.getRole())) {
+                accessedDocument.add(document.get());
+                break;
             }
         }
         return accessedDocument;

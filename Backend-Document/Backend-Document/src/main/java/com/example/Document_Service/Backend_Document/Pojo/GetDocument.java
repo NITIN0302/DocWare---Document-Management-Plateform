@@ -1,5 +1,8 @@
 package com.example.Document_Service.Backend_Document.Pojo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class GetDocument {
     private Integer status;
     private String message;

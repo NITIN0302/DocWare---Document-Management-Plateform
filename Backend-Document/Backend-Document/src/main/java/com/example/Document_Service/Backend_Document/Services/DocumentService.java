@@ -13,4 +13,8 @@ public interface DocumentService
     GetDocument getDocumentContent(String username,Long uuid);
 
     public List<NodeDocument> getDocument(String username,Long parentId);
+
+    public List<NodeDocument> getDocumentByName(String username,String docname);
+
+    public List<NodeDocument> getDocumentByUuid(String username,Long uuid);
 }

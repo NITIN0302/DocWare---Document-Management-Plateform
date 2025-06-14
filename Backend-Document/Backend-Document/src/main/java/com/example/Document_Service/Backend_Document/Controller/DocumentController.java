@@ -73,4 +73,30 @@ public class DocumentController {
         }
     }
 
+    @GetMapping("/getDocumentByName/{docname}")
+    public ResponseEntity<?> getDocumentByName(HttpServletRequest request,@PathVariable String docname){
+        String token = request.getHeader("Authorization");
+        String username = getUser.getUserByJwtToken(token);
+        ResultResponse responseResult = validateUser.validateToken(token).getBody();
+        if (responseResult.getStatus().equalsIgnoreCase("1")) {
+            List<NodeDocument> response = documentService.getDocumentByName(username,docname);
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.ok(responseResult);
+        }
+    }
+
+    @GetMapping("/getDocumetnById/{uuid}")
+    public ResponseEntity<?> getDocumentByUuid(HttpServletRequest request,@PathVariable Long uuid){
+        String token = request.getHeader("Authorization");
+        String username = getUser.getUserByJwtToken(token);
+        ResultResponse responseResult = validateUser.validateToken(token).getBody();
+        if (responseResult.getStatus().equalsIgnoreCase("1")) {
+            List<NodeDocument> response = documentService.getDocumentByUuid(username,uuid);
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.ok(responseResult);
+        }
+    }
+
 }

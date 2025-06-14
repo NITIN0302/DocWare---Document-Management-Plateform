@@ -7,4 +7,7 @@ import java.util.List;
 
 public interface DocumentRepository extends JpaRepository<NodeDocument,Long> {
     public List<NodeDocument> getDocumentByParentId(Long parentId);
+
+    public List<NodeDocument> getDocumentByName(String name);
+
 }
