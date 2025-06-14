@@ -4,6 +4,7 @@ import com.example.Document_Service.Backend_Document.Entity.NodeDocument;
 import com.example.Document_Service.Backend_Document.Pojo.GetDocument;
 import com.example.Document_Service.Backend_Document.Pojo.ResultResponse;
 import com.example.Document_Service.Backend_Document.Pojo.UploadResponse;
+import com.example.Document_Service.Backend_Document.Services.GetUser;
 import com.example.Document_Service.Backend_Document.Services.Impl.DocumentServiceImpl;
 import com.example.Document_Service.Backend_Document.Services.ValidateUser;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,9 @@ public class DocumentController {
 
     @Autowired
     public ValidateUser validateUser;
+
+    @Autowired
+    public GetUser getUser;
 
 
     public DocumentController(DocumentServiceImpl documentService, ValidateUser validateUser) {
@@ -46,9 +50,10 @@ public class DocumentController {
     public ResponseEntity<?> getDocumentContent(HttpServletRequest request, @PathVariable Long id) {
         GetDocument response = new GetDocument();
         String token = request.getHeader("Authorization");
+        String username = getUser.getUserByJwtToken(token);
         ResultResponse responseResult = validateUser.validateToken(token).getBody();
         if (responseResult.getStatus().equalsIgnoreCase("1")) {
-            response = documentService.getDocumentContent(id);
+            response = documentService.getDocumentContent(username,id);
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.ok(responseResult);
@@ -58,9 +63,10 @@ public class DocumentController {
     @GetMapping("/getDocument/{parentId}")
     public ResponseEntity<?> getDocument(HttpServletRequest request, @PathVariable Long parentId) {
         String token = request.getHeader("Authorization");
+        String username = getUser.getUserByJwtToken(token);
         ResultResponse responseResult = validateUser.validateToken(token).getBody();
         if (responseResult.getStatus().equalsIgnoreCase("1")) {
-            List<NodeDocument> response = documentService.getDocument(parentId);
+            List<NodeDocument> response = documentService.getDocument(username,parentId);
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.ok(responseResult);

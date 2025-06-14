@@ -1,6 +1,7 @@
 package com.example.Document_Service.Backend_Document.Services.Impl;
 
 import com.example.Document_Service.Backend_Document.Entity.Config;
+import com.example.Document_Service.Backend_Document.Entity.DocumentAccess;
 import com.example.Document_Service.Backend_Document.Entity.NodeDocument;
 import com.example.Document_Service.Backend_Document.FileModule.CreateFileName;
 import com.example.Document_Service.Backend_Document.FileModule.FileStreamHandler;
@@ -8,10 +9,13 @@ import com.example.Document_Service.Backend_Document.Pojo.GetDocument;
 import com.example.Document_Service.Backend_Document.Pojo.UploadResponse;
 import com.example.Document_Service.Backend_Document.Services.ConfigService;
 import com.example.Document_Service.Backend_Document.Services.DocumentService;
+import com.example.Document_Service.Backend_Document.Services.GetRole;
+import com.example.Document_Service.Backend_Document.Services.RoleService;
 import com.example.Document_Service.Backend_Document.repository.DocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -25,16 +29,28 @@ public class DocumentServiceImpl implements DocumentService {
     @Autowired
     private ConfigService configService;
 
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private GetRole userRole;
+
     @Override
     public UploadResponse uploadDocument(NodeDocument nodeDocument) {
         UploadResponse response = new UploadResponse();
         String fileString = nodeDocument.getFileString();
+        List<String> roles = nodeDocument.getRoles();
         String encodedName = CreateFileName.createName(nodeDocument);
         nodeDocument.setNbs_uuid(encodedName);
         Config cf = configService.getConfigValue();
         String Location = cf.getVolumn() + nodeDocument.getName() + "-" + encodedName + ".txt";
         FileStreamHandler.createAndWriteToFile(fileString, Location);
         NodeDocument nd = documentRepository.save(nodeDocument);
+        for (String role : roles) {
+            DocumentAccess da = new DocumentAccess();
+            da.setUuid(nd.getUuid());
+            da.setRole(role);
+            roleService.addAccessRights(da);
+        }
         response.setStatus(1);
         response.setUuid(nd.getUuid());
         response.setMessage("Document Uploaded Succesfully");
@@ -42,30 +58,59 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public GetDocument getDocumentContent(Long uuid) {
+    public GetDocument getDocumentContent(String username, Long uuid) {
         GetDocument response = new GetDocument();
+        List<DocumentAccess> accessRights = roleService.getAccessByuuid(uuid);
+        List<String> userRoles = userRole.getRole(username);
+        boolean isAccessible = false;
+        for(DocumentAccess da:accessRights){
+            if(userRoles.contains(da.getRole())){
+                isAccessible = true;
+                break;
+            }
+        }
         NodeDocument nd = documentRepository.findById(uuid).orElseThrow();
         Config cf = configService.getConfigValue();
         String filePath = cf.getVolumn() + nd.getName() + "-" + nd.getNbs_uuid() + ".txt";
         String fileString = FileStreamHandler.readFile(filePath);
-        if(fileString == ""){
-            response.setMessage("File Not Found");
+        if (isAccessible) {
+            if (fileString == "") {
+                response.setMessage("File Not Found");
+            } else {
+                response.setMessage("Success");
+            }
+            response.setFileString(fileString);
+            response.setStatus(1);
+            response.setUuid(nd.getUuid());
+            response.setName(nd.getName());
+            response.setExt(nd.getExt());
         }
         else{
-            response.setMessage("Success");
+            response.setStatus(0);
+            response.setMessage("ACCESS DENIED");
         }
-        response.setFileString(fileString);
-        response.setStatus(1);
-        response.setUuid(nd.getUuid());
-        response.setName(nd.getName());
-        response.setExt(nd.getExt());
         return response;
     }
 
     @Override
-    public List<NodeDocument> getDocument(Long parentId) {
-        List<NodeDocument> nd = documentRepository.getDocumentByParentId(parentId);
-        return nd;
+    public List<NodeDocument> getDocument(String username, Long parentId) {
+        List<NodeDocument> allDocument = documentRepository.getDocumentByParentId(parentId);
+        List<NodeDocument> accessedDocument = new ArrayList<NodeDocument>();
+        List<String> userRoles = userRole.getRole(username);
+        if (userRoles.contains("ROLE_ADMIN")) {
+            return allDocument;
+        } else {
+            for (NodeDocument nd : allDocument) {
+                List<DocumentAccess> accessRights = roleService.getAccessByuuid(nd.getUuid());
+                for (DocumentAccess fa : accessRights) {
+                    if (userRoles.contains(fa.getRole())) {
+                        accessedDocument.add(nd);
+                    }
+                }
+
+            }
+        }
+        return accessedDocument;
     }
 
 }

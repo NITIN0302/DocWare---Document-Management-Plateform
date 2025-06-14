@@ -1,7 +1,16 @@
 package com.example.Folder_Service.Entity;
-import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "SDM_NODE_FOLDER")
@@ -25,6 +34,7 @@ public class NodeFolder {
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }
+    
     @PrePersist
     protected void onCreate() {
         createdDate = new Date();

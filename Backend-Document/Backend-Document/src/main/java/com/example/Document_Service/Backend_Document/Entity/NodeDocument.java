@@ -2,6 +2,7 @@ package com.example.Document_Service.Backend_Document.Entity;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "SDM_NODE_DOCUMENT")
@@ -19,6 +20,15 @@ public class NodeDocument
     public String nbs_uuid;
     @Transient
     public String fileString;
+    @Transient
+    private List<String> roles;
+
+    public List<String> getRoles() {
+        return roles;
+    }
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
 
     @PrePersist
     protected void onCreate() {

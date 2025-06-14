@@ -10,7 +10,7 @@ import java.util.List;
 public interface DocumentService
 {
     UploadResponse uploadDocument(NodeDocument nodeDocument);
-    GetDocument getDocumentContent(Long uuid);
+    GetDocument getDocumentContent(String username,Long uuid);
 
-    public List<NodeDocument> getDocument(Long parentId);
+    public List<NodeDocument> getDocument(String username,Long parentId);
 }
