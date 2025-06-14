@@ -1,9 +1,11 @@
 package com.example.User_Service.Controller;
 
+import com.example.User_Service.Entity.Authorities;
 import com.example.User_Service.Entity.UserInfo;
 import com.example.User_Service.Pojo.LoginRequest;
 import com.example.User_Service.Pojo.LoginResponse;
 import com.example.User_Service.Pojo.ResultResponse;
+import com.example.User_Service.Repository.UserRepository;
 import com.example.User_Service.session.JwtBlacklistService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,6 +44,9 @@ public class UserController {
 
     @Autowired
     private JwtBlacklistService jwtBlacklistService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     DataSource dataSource;
@@ -128,6 +133,23 @@ public class UserController {
             result.setMessage("Invalid Token");
         }
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/getRole")
+    public List<String> getRole(HttpServletRequest request){
+        List<String> result = new ArrayList<String>();
+        List<Authorities> response = userRepository.findByUsername(request.getHeader("username"));
+        for(Authorities role : response){
+            result.add(role.getAuthority());
+        }
+        return result;
+    }
+
+    @GetMapping("/getUserInfo")
+    public String getUserByJwtToken(HttpServletRequest request){
+        String token = request.getHeader("Authorization");
+        System.out.println("Token : " + token);
+        return jwtUtils.getUserNameFromJwtToken(token.substring(7));
     }
 
 

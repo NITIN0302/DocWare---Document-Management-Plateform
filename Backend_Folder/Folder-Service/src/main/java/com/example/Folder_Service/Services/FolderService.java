@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FolderService{
-    List<NodeFolder>  getFolderByName(String name);
+    List<NodeFolder>  getFolderByName(String username,String name);
 
     NodeFolder createFolder(NodeFolder nodefolder);
 
-    List<NodeFolder> getFolder(int parentId);
+    List<NodeFolder> getFolder(String username, int parentId);
 
-    Optional<NodeFolder> getFolderById(int id);
+    Optional<NodeFolder> getFolderById(String username,int id);
 }

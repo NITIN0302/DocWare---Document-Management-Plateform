@@ -63,6 +63,7 @@ const Browse = () => {
             parentId: parentId,
             createdBy: username,
             freeze: 0,
+            roles: [],
           }),
         }
       );
@@ -136,6 +137,13 @@ const Browse = () => {
             }}
             placeholder="Enter Folder Name"
           />
+          <label className="text-black mb-2">Select Role : </label>
+          <select className="w-[90%] py-1 px-2 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white">
+            <option selected value="">Select folder role</option>
+            <option value="ROLE_ADMIN">ADMIN</option>
+            <option value="ROLE_USER">USER</option>
+            <option value="ROLE_MANAGEMENT">MANAGEMENT</option>
+          </select>
           <div className="flex flex-wrap justify-end">
             <button
               className="bg-indigo-500 border mt-2 border-blue-500 px-2 py-1 rounded-md hover:shadow-lg hover:shadow-indigo-500/50 transition duration-500 shadow-none"
@@ -177,7 +185,9 @@ const Browse = () => {
             className="border-2 mr-2 w-40 border-black rounded-md"
             onChange={(e) => setSelectedValue(e.target.value)}
           >
-            <option default value="F">Folder</option>
+            <option default value="F">
+              Folder
+            </option>
             <option value="D">Document</option>
           </select>
           <button
