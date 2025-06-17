@@ -139,7 +139,9 @@ const Browse = () => {
           />
           <label className="text-black mb-2">Select Role : </label>
           <select className="w-[90%] py-1 px-2 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white">
-            <option selected value="">Select folder role</option>
+            <option selected value="">
+              Select folder role
+            </option>
             <option value="ROLE_ADMIN">ADMIN</option>
             <option value="ROLE_USER">USER</option>
             <option value="ROLE_MANAGEMENT">MANAGEMENT</option>
@@ -216,9 +218,16 @@ const Browse = () => {
             setParentId={setParentId}
             setPath={setPath}
             path={path}
+            getFolder={getFolder}
+            
           />
         ) : (
-          <Document docData={docData} parentId={parentId} />
+          <Document
+            docData={docData}
+            parentId={parentId}
+            setDocData={setDocData}
+            getDocument={getDocument}
+          />
         )}
       </div>
     </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faLockOpen } from "@fortawesome/free-solid-svg-icons";
 
-const Folder = ({ folderData, parentId, setParentId, setPath, path }) => {
+const Folder = ({ folderData, parentId, setParentId, setPath, path, getFolder }) => {
   const [loading, setLoading] = useState();
   const [error, setError] = useState();
 
@@ -35,6 +35,7 @@ const Folder = ({ folderData, parentId, setParentId, setPath, path }) => {
         throw new Error("Network response was not ok");
       }
       const result = await response.json();
+      const folData = await getFolder();
     } catch (err) {
       setError(err.message);
     } finally {
