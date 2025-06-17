@@ -148,7 +148,6 @@ public class UserController {
     @GetMapping("/getUserInfo")
     public String getUserByJwtToken(HttpServletRequest request){
         String token = request.getHeader("Authorization");
-        System.out.println("Token : " + token);
         return jwtUtils.getUserNameFromJwtToken(token.substring(7));
     }
 
