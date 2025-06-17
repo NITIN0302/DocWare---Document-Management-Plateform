@@ -142,7 +142,6 @@ public class DocumentServiceImpl implements DocumentService {
                         accessedDocument.add(nd);
                     }
                 }
-
             }
         }
         return accessedDocument;

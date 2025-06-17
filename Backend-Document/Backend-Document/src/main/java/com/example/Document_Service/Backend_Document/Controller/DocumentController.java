@@ -1,6 +1,7 @@
 package com.example.Document_Service.Backend_Document.Controller;
 
 import com.example.Document_Service.Backend_Document.Entity.NodeDocument;
+import com.example.Document_Service.Backend_Document.Entity.RecycledDocument;
 import com.example.Document_Service.Backend_Document.Pojo.DeleteDocument;
 import com.example.Document_Service.Backend_Document.Pojo.GetDocument;
 import com.example.Document_Service.Backend_Document.Pojo.ResultResponse;
@@ -92,7 +93,7 @@ public class DocumentController {
         }
     }
 
-    @GetMapping("/getDocumetnById/{uuid}")
+    @GetMapping("/getDocumentById/{uuid}")
     public ResponseEntity<?> getDocumentByUuid(HttpServletRequest request,@PathVariable Long uuid){
         String token = request.getHeader("Authorization");
         String username = getUser.getUserByJwtToken(token);
@@ -119,12 +120,12 @@ public class DocumentController {
     }
 
     @GetMapping("/getAllRecycledDocument")
-    public ResponseEntity<?> getAllRecycleDocument(HttpServletRequest request,@PathVariable Long uuid){
+    public ResponseEntity<?> getAllRecycleDocument(HttpServletRequest request){
         String token = request.getHeader("Authorization");
         String username = getUser.getUserByJwtToken(token);
         ResultResponse responseResult = validateUser.validateToken(token).getBody();
         if (responseResult.getStatus().equalsIgnoreCase("1")) {
-            DeleteDocument response = recycleService.recycleDocument(username,uuid);
+            List<RecycledDocument> response = recycleService.getAllDeletedDocument(username);
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.ok(responseResult);
