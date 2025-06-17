@@ -104,12 +104,16 @@ public class DocumentServiceImpl implements DocumentService {
         List<NodeDocument> accessedDocument = new ArrayList<NodeDocument>();
         List<String> userRoles = userRole.getRole(username);
         if (userRoles.contains("ROLE_ADMIN")) {
-            return allDocument;
+            for (NodeDocument nd : allDocument) {
+                if (nd.getIsDeleted().equalsIgnoreCase("0")) {
+                    accessedDocument.add(nd);
+                }
+            }
         } else {
             for (NodeDocument nd : allDocument) {
                 List<DocumentAccess> accessRights = roleService.getAccessByuuid(nd.getUuid());
                 for (DocumentAccess fa : accessRights) {
-                    if (userRoles.contains(fa.getRole())) {
+                    if (userRoles.contains(fa.getRole()) && nd.getIsDeleted().equalsIgnoreCase("0")) {
                         accessedDocument.add(nd);
                     }
                 }
@@ -125,12 +129,16 @@ public class DocumentServiceImpl implements DocumentService {
         List<NodeDocument> accessedDocument = new ArrayList<NodeDocument>();
         List<String> userRoles = userRole.getRole(username);
         if (userRoles.contains("ROLE_ADMIN")) {
-            return allDocument;
+            for (NodeDocument nd : allDocument) {
+                if (nd.getIsDeleted().equalsIgnoreCase("0")) {
+                    accessedDocument.add(nd);
+                }
+            }
         } else {
             for (NodeDocument nd : allDocument) {
                 List<DocumentAccess> accessRights = roleService.getAccessByuuid(nd.getUuid());
                 for (DocumentAccess fa : accessRights) {
-                    if (userRoles.contains(fa.getRole())) {
+                    if (userRoles.contains(fa.getRole()) && nd.getIsDeleted().equalsIgnoreCase("0")) {
                         accessedDocument.add(nd);
                     }
                 }
@@ -147,7 +155,7 @@ public class DocumentServiceImpl implements DocumentService {
         List<String> userRoles = userRole.getRole(username);
         List<DocumentAccess> da = roleService.getAccessByuuid(document.get().getUuid());
         for (DocumentAccess documentAccess : da) {
-            if (userRoles.contains(documentAccess.getRole())) {
+            if (userRoles.contains(documentAccess.getRole()) && document.get().getIsDeleted().equalsIgnoreCase("0")) {
                 accessedDocument.add(document.get());
                 break;
             }
@@ -182,7 +190,8 @@ public class DocumentServiceImpl implements DocumentService {
                 rd.setExt(nd.getExt());
                 rd.setNbs_uuid(nd.getNbs_uuid());
                 recycleRepository.save(rd);
-                documentRepository.deleteById(uuid);
+                nd.setIsDeleted("1");
+                documentRepository.save(nd);
             }
             response.setStatus("1");
             response.setMessage("Document Deleted Succesfully");

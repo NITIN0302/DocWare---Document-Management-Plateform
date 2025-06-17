@@ -49,7 +49,8 @@ public class RecycleServiceImpl implements RecycleService {
             nd.setCreatedDate(recycleDocument.getCreatedDate());
             nd.setExt(recycleDocument.getExt());
             recycleRepository.deleteById(uuid);
-            documentRepository.saveAndFlush(nd);
+            nd.setIsDeleted("0");
+            documentRepository.save(nd);
             response.setStatus("1");
             response.setMessage("Document Recycle Succesfully");
         }
