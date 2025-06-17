@@ -159,7 +159,7 @@ const Browse = () => {
       <div className="w-[12%] md:w-[15%] bg-gray-50 pt-8 m-1 rounded-sm">
         <Sidebar />
       </div>
-      <div className="bg-gray-200 text-black my-1 rounded-sm p-4 grow">
+      <div className="bg-white text-black my-1 rounded-sm p-4 grow">
         <div className="flex flex-wrap justify-between border-b-1 border-gray-400">
           <h1 className="w-fit text-xl">Browse Your Folder</h1>
           <div className="w-fit flex flex-wrap justify-around">

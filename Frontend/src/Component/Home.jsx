@@ -19,7 +19,7 @@ const Home = () => {
       <div className="w-[12%] md:w-[15%] bg-gray-50 pt-8 m-1 rounded-sm">
         <Sidebar />
       </div>
-      <div className="bg-gray-100 my-1 rounded-sm p-4 grow grid grid-cols-2 md:grid-cols-4 grid-rows-3 gap-4">
+      <div className="bg-white my-1 rounded-sm p-4 grow grid grid-cols-2 md:grid-cols-4 grid-rows-3 gap-4">
         <div
           onClick={() => handleNavigation("/home", 1)}
           className="rounded-md grid grid-cols-1 border-2 border-amber-50 bg-white shadow-md hover:scale-105 transition duration-300"
