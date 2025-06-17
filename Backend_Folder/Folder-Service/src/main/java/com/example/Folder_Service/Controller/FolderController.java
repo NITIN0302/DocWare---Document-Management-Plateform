@@ -8,6 +8,7 @@ import com.example.Folder_Service.Pojo.ResultResponse;
 import com.example.Folder_Service.Services.FolderService;
 import com.example.Folder_Service.Services.GetUser;
 import com.example.Folder_Service.Services.ValidateUser;
+import com.example.Folder_Service.Services.impl.FolderServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,12 +23,12 @@ import java.util.Optional;
 public class FolderController {
 
     @Autowired
-    public final FolderService folderService;
+    public final FolderServiceImpl folderService;
     public final ValidateUser validateUser;
     @Autowired
     private GetUser getUser;
 
-    public FolderController(FolderService folderService, ValidateUser validateUser) {
+    public FolderController(FolderServiceImpl folderService, ValidateUser validateUser) {
         this.folderService = folderService;
         this.validateUser = validateUser;
     }
@@ -38,10 +39,9 @@ public class FolderController {
         String username = getUser.getUserByJwtToken(token);
         ResultResponse response = validateUser.validateToken(token).getBody();
         if (response.getStatus().equalsIgnoreCase("1")) {
-            List<NodeFolder> folders = folderService.getFolderByName(username,name);
+            List<NodeFolder> folders = folderService.getFolderByName(username, name);
             return ResponseEntity.ok(folders);
-        }
-        else{
+        } else {
             return ResponseEntity.ok(response);
         }
     }
@@ -53,7 +53,7 @@ public class FolderController {
         String username = getUser.getUserByJwtToken(token);
         ResultResponse responseResult = validateUser.validateToken(token).getBody();
         if (responseResult.getStatus().equalsIgnoreCase("1")) {
-            List<NodeFolder> folders = folderService.getFolderByName(username,nodeFolder.getName());
+            List<NodeFolder> folders = folderService.getFolderByName(username, nodeFolder.getName());
             if (!folders.isEmpty()) {
                 response = new CreateFolder(0, "Folder Already Exists", "", folders);
                 return ResponseEntity.ok(response);
@@ -73,7 +73,7 @@ public class FolderController {
         String username = getUser.getUserByJwtToken(token);
         ResultResponse response = validateUser.validateToken(token).getBody();
         if (response.getStatus().equalsIgnoreCase("1")) {
-            List<NodeFolder> folders = folderService.getFolder(username,parentId);
+            List<NodeFolder> folders = folderService.getFolder(username, parentId);
             return ResponseEntity.ok(folders);
         } else {
             return ResponseEntity.ok(response);
@@ -87,7 +87,7 @@ public class FolderController {
         ResultResponse response = validateUser.validateToken(token).getBody();
         Optional<NodeFolder> folder;
         if (response.getStatus().equalsIgnoreCase("1")) {
-            folder = folderService.getFolderById(username,id);
+            folder = folderService.getFolderById(username, id);
         } else {
             return ResponseEntity.ok(response);
         }
@@ -99,14 +99,14 @@ public class FolderController {
     @PostMapping("/freezeFolder/{id}")
     public ResponseEntity<?> freezeFolderById(HttpServletRequest request, @PathVariable int id) {
         Response resultset = new Response();
-        String username = getUser.getUserByJwtToken(request.getHeader("Authorization").substring(7));
         String token = request.getHeader("Authorization");
+        String username = getUser.getUserByJwtToken(token);
         ResultResponse response = validateUser.validateToken(token).getBody();
         if (response.getStatus().equalsIgnoreCase("1")) {
-            Optional<NodeFolder> folder = folderService.getFolderById(username,id);
+            Optional<NodeFolder> folder = folderService.getFolderById(username, id);
             int freezeStatus = folder.get().getFreeze();
             folder.get().setFreeze(freezeStatus == 1 ? 0 : 1);
-            folderService.createFolder(folder.get());
+            folderService.freezeFolder(folder.get());
             if (freezeStatus == 1) {
                 resultset = new Response(1, "Folder is UnFreezed", "");
             } else {

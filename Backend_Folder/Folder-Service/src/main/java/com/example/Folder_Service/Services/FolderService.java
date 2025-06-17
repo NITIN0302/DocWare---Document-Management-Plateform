@@ -15,4 +15,6 @@ public interface FolderService{
     List<NodeFolder> getFolder(String username, int parentId);
 
     Optional<NodeFolder> getFolderById(String username,int id);
+
+    NodeFolder freezeFolder(NodeFolder nd);
 }

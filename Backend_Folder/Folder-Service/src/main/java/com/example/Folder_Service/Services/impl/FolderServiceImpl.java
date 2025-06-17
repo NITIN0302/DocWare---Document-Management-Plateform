@@ -101,4 +101,10 @@ public class FolderServiceImpl implements FolderService {
         }
         return null;
     }
+
+    @Override
+    public NodeFolder freezeFolder(NodeFolder nd) {
+        return folderRepository.save(nd);
+    }
+
 }
