@@ -1,4 +1,5 @@
 package com.example.Document_Service.Backend_Document.Entity;
+
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -6,8 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "SDM_NODE_DOCUMENT")
-public class NodeDocument
-{
+public class NodeDocument {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long uuid;
@@ -22,25 +22,44 @@ public class NodeDocument
     public String fileString;
     @Transient
     private List<String> roles;
+    private String isDeleted;
+
+    public String getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(String isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
 
     public List<String> getRoles() {
         return roles;
     }
+
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }
 
     @PrePersist
     protected void onCreate() {
+        if (isDeleted == null) {
+            isDeleted = "0";
+        }
         createdDate = new Date();
     }
+
     public String getName() {
         return name;
     }
 
-    public String getExt() { return ext; }
+    public String getExt() {
+        return ext;
+    }
 
-    public void setExt(String ext) { this.ext = ext; }
+    public void setExt(String ext) {
+        this.ext = ext;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -93,7 +112,6 @@ public class NodeDocument
     public void setUuid(Long uuid) {
         this.uuid = uuid;
     }
-
 
 
 }

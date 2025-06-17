@@ -1,11 +1,14 @@
 package com.example.Document_Service.Backend_Document.Controller;
 
 import com.example.Document_Service.Backend_Document.Entity.NodeDocument;
+import com.example.Document_Service.Backend_Document.Pojo.DeleteDocument;
 import com.example.Document_Service.Backend_Document.Pojo.GetDocument;
 import com.example.Document_Service.Backend_Document.Pojo.ResultResponse;
 import com.example.Document_Service.Backend_Document.Pojo.UploadResponse;
 import com.example.Document_Service.Backend_Document.Services.GetUser;
 import com.example.Document_Service.Backend_Document.Services.Impl.DocumentServiceImpl;
+import com.example.Document_Service.Backend_Document.Services.Impl.RecycleServiceImpl;
+import com.example.Document_Service.Backend_Document.Services.RecycleService;
 import com.example.Document_Service.Backend_Document.Services.ValidateUser;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,9 @@ public class DocumentController {
 
     @Autowired
     public GetUser getUser;
+
+    @Autowired
+    public RecycleServiceImpl recycleService;
 
 
     public DocumentController(DocumentServiceImpl documentService, ValidateUser validateUser) {
@@ -93,6 +99,45 @@ public class DocumentController {
         ResultResponse responseResult = validateUser.validateToken(token).getBody();
         if (responseResult.getStatus().equalsIgnoreCase("1")) {
             List<NodeDocument> response = documentService.getDocumentByUuid(username,uuid);
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.ok(responseResult);
+        }
+    }
+
+    @GetMapping("/deleteDocumentById/{uuid}")
+    public ResponseEntity<?> deleteDocumentByUuid(HttpServletRequest request,@PathVariable Long uuid){
+        String token = request.getHeader("Authorization");
+        String username = getUser.getUserByJwtToken(token);
+        ResultResponse responseResult = validateUser.validateToken(token).getBody();
+        if (responseResult.getStatus().equalsIgnoreCase("1")) {
+            DeleteDocument response = documentService.deleteDocumentByUuid(username,uuid).getBody();
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.ok(responseResult);
+        }
+    }
+
+    @GetMapping("/getAllRecycledDocument")
+    public ResponseEntity<?> getAllRecycleDocument(HttpServletRequest request,@PathVariable Long uuid){
+        String token = request.getHeader("Authorization");
+        String username = getUser.getUserByJwtToken(token);
+        ResultResponse responseResult = validateUser.validateToken(token).getBody();
+        if (responseResult.getStatus().equalsIgnoreCase("1")) {
+            DeleteDocument response = recycleService.recycleDocument(username,uuid);
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.ok(responseResult);
+        }
+    }
+
+    @GetMapping("/recycleDocument/{uuid}")
+    public ResponseEntity<?> recycleDocument(HttpServletRequest request,@PathVariable Long uuid){
+        String token = request.getHeader("Authorization");
+        String username = getUser.getUserByJwtToken(token);
+        ResultResponse responseResult = validateUser.validateToken(token).getBody();
+        if (responseResult.getStatus().equalsIgnoreCase("1")) {
+            DeleteDocument response = recycleService.recycleDocument(username,uuid);
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.ok(responseResult);

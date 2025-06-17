@@ -3,8 +3,10 @@ package com.example.Document_Service.Backend_Document.Services.Impl;
 import com.example.Document_Service.Backend_Document.Entity.Config;
 import com.example.Document_Service.Backend_Document.Entity.DocumentAccess;
 import com.example.Document_Service.Backend_Document.Entity.NodeDocument;
+import com.example.Document_Service.Backend_Document.Entity.RecycledDocument;
 import com.example.Document_Service.Backend_Document.FileModule.CreateFileName;
 import com.example.Document_Service.Backend_Document.FileModule.FileStreamHandler;
+import com.example.Document_Service.Backend_Document.Pojo.DeleteDocument;
 import com.example.Document_Service.Backend_Document.Pojo.GetDocument;
 import com.example.Document_Service.Backend_Document.Pojo.UploadResponse;
 import com.example.Document_Service.Backend_Document.Services.ConfigService;
@@ -12,7 +14,9 @@ import com.example.Document_Service.Backend_Document.Services.DocumentService;
 import com.example.Document_Service.Backend_Document.Services.GetRole;
 import com.example.Document_Service.Backend_Document.Services.RoleService;
 import com.example.Document_Service.Backend_Document.repository.DocumentRepository;
+import com.example.Document_Service.Backend_Document.repository.RecycleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,6 +38,8 @@ public class DocumentServiceImpl implements DocumentService {
     private RoleService roleService;
     @Autowired
     private GetRole userRole;
+    @Autowired
+    private RecycleRepository recycleRepository;
 
     @Override
     public UploadResponse uploadDocument(NodeDocument nodeDocument) {
@@ -64,8 +70,8 @@ public class DocumentServiceImpl implements DocumentService {
         List<DocumentAccess> accessRights = roleService.getAccessByuuid(uuid);
         List<String> userRoles = userRole.getRole(username);
         boolean isAccessible = false;
-        for(DocumentAccess da:accessRights){
-            if(userRoles.contains(da.getRole())){
+        for (DocumentAccess da : accessRights) {
+            if (userRoles.contains(da.getRole())) {
                 isAccessible = true;
                 break;
             }
@@ -85,8 +91,7 @@ public class DocumentServiceImpl implements DocumentService {
             response.setUuid(nd.getUuid());
             response.setName(nd.getName());
             response.setExt(nd.getExt());
-        }
-        else{
+        } else {
             response.setStatus(0);
             response.setMessage("ACCESS DENIED");
         }
@@ -148,6 +153,41 @@ public class DocumentServiceImpl implements DocumentService {
             }
         }
         return accessedDocument;
+    }
+
+    @Override
+    public ResponseEntity<DeleteDocument> deleteDocumentByUuid(String username, Long uuid) {
+        Optional<NodeDocument> document = documentRepository.findById(uuid);
+        DeleteDocument response = new DeleteDocument();
+        List<NodeDocument> accessedDocument = new ArrayList<NodeDocument>();
+        List<String> userRoles = userRole.getRole(username);
+        List<DocumentAccess> da = roleService.getAccessByuuid(document.get().getUuid());
+        for (DocumentAccess documentAccess : da) {
+            if (userRoles.contains(documentAccess.getRole())) {
+                accessedDocument.add(document.get());
+                break;
+            }
+        }
+        if (accessedDocument.isEmpty()) {
+            response.setStatus("0");
+            response.setMessage("Access Denied");
+        } else {
+            for (NodeDocument nd : accessedDocument) {
+                RecycledDocument rd = new RecycledDocument();
+                rd.setUuid(nd.getUuid());
+                rd.setName(nd.getName());
+                rd.setCreatedBy(nd.getCreatedBy());
+                rd.setCreatedDate(nd.getCreatedDate());
+                rd.setParentId(nd.getParentId());
+                rd.setExt(nd.getExt());
+                rd.setNbs_uuid(nd.getNbs_uuid());
+                recycleRepository.save(rd);
+                documentRepository.deleteById(uuid);
+            }
+            response.setStatus("1");
+            response.setMessage("Document Deleted Succesfully");
+        }
+        return ResponseEntity.ok(response);
     }
 
 }
