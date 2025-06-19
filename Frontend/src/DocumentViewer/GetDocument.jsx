@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 
 function GetDocument() {
   const [docId, setDocId] = useState(localStorage.getItem("DocId"));
-  const [fileString,setFileString] = useState("");
-  const [ext,setExt] = useState("");
+  const [fileString, setFileString] = useState("");
+  const [ext, setExt] = useState("");
 
   const getDocument = async () => {
     try {
@@ -12,7 +12,7 @@ function GetDocument() {
         {
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: `Bearer ${localStorage.getItem("Token")}`,
           },
         }
       );
@@ -31,15 +31,17 @@ function GetDocument() {
     const result = await getDocument();
     setExt(result.ext);
     setFileString(result.fileString);
-  }
+  };
 
   useEffect(() => {
     getDocumentContent();
   }, []);
 
-  return <div className="w-[99%] m-1 h-[90%] border border-black bg-white rounded-md text-black">
-
-  </div>;
+  return (
+    <div className="w-[99%] m-1 h-[90%] border border-black bg-white rounded-md text-black">
+      
+    </div>
+  );
 }
 
 export default GetDocument;

@@ -58,7 +58,7 @@ const FolderSearch = () => {
         throw new Error("Network response was not ok");
       }
       const result = await response.json();
-      setFolderData([...folderData, result]);
+      setFolderData([result]);
       setFolderId("");
     } catch (err) {
       setError(err.message);

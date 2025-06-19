@@ -12,11 +12,11 @@ const Search = () => {
         <Sidebar />
       </div>
       <div className="text-black bg-gray-100 my-1 rounded-sm p-4 grow">
-        <div className="flex flex-wrap">
+        <div className="grid grid-cols-11 gap-0.5">
           <div
             className={`${
               type == "D" ? "bg-blue-500 text-white" : "bg-white"
-            } border border-blue-500 rounded-t-md text-sm px-2 cursor-pointer py-0.5`}
+            } border-l flex justify-center border-t border-r border-blue-500 rounded-t-md text-sm px-2 cursor-pointer py-0.5`}
             onClick={()=>{setType("D")}}
           >
             Document
@@ -24,7 +24,7 @@ const Search = () => {
           <div
             className={`${
               type == "F" ? "bg-blue-500 text-white" : "bg-white"
-            } border border-blue-500 rounded-t-md text-sm px-2 cursor-pointer py-0.5`}
+            } border-l flex justify-center  border-t border-r border-blue-500 rounded-t-md text-sm px-2 cursor-pointer py-0.5`}
             onClick={()=>{setType("F")}}
           >
             Folder

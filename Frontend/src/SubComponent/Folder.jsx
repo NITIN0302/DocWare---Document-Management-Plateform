@@ -66,7 +66,7 @@ const Folder = ({ folderData, parentId, setParentId, setPath, path, getFolder })
         {folderData.length != 0 ? (
           folderData.map((ele, index) => (
             <div
-              className={`bg-gray-200 hover:bg-gray-200 flex flex-wrap text-sm overflow-auto no-scrollbar text-black  border-b border-gray-400`}
+              className={`${index%2 == 0?"bg-gray-200":"bg-white" }  hover:bg-gray-100 flex flex-wrap text-sm overflow-auto no-scrollbar text-black  border-b border-gray-400`}
               id={index}
             >
               <div className="w-[10%] border-r border-gray-400 items-center p-2">
