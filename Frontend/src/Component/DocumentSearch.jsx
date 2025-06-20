@@ -37,7 +37,6 @@ const DocumentSearch = () => {
       setDocumentdata(result);
       setDocname("");
     } catch (err) {
-      setError(err.message);
     } finally {
     }
   };
@@ -60,7 +59,6 @@ const DocumentSearch = () => {
       setDocumentdata(result);
       setDocid("");
     } catch (err) {
-      setError(err.message);
     } finally {
     }
   };
