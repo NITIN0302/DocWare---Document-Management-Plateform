@@ -21,6 +21,7 @@ const Browse = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modal1Open, setModal1Open] = useState(false);
   const [folderName, setFoldername] = useState("");
   const [docFol, setDocfol] = useState("F");
   const { username } = useCounterContext();
@@ -129,6 +130,15 @@ const Browse = () => {
         title="Create Folder"
       >
         <div className="">
+          <label className="text-black mb-2">Folder Access : </label>
+          <select className="w-[90%] py-1 px-2 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white">
+            <option selected value="">
+              Select Folder Access Role
+            </option>
+            <option value="ROLE_ADMIN">ADMIN</option>
+            <option value="ROLE_USER">USER</option>
+            <option value="ROLE_MANAGEMENT">MANAGEMENT</option>
+          </select>
           <label className="text-black mb-2">Folder Name : </label>
           <input
             className="w-[90%] py-1 px-2 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white"
@@ -137,21 +147,43 @@ const Browse = () => {
             }}
             placeholder="Enter Folder Name"
           />
-          <label className="text-black mb-2">Select Role : </label>
-          <select className="w-[90%] py-1 px-2 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white">
-            <option selected value="">
-              Select folder role
-            </option>
-            <option value="ROLE_ADMIN">ADMIN</option>
-            <option value="ROLE_USER">USER</option>
-            <option value="ROLE_MANAGEMENT">MANAGEMENT</option>
-          </select>
           <div className="flex flex-wrap justify-end">
             <button
               className="bg-indigo-500 border mt-2 border-blue-500 px-2 py-1 rounded-md hover:shadow-lg hover:shadow-indigo-500/50 transition duration-500 shadow-none"
               onClick={createFolder}
             >
               Create
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={modal1Open}
+        onClose={() => setModal1Open(false)}
+        title="Upload Document"
+      >
+        <div className="">
+          <label className="text-black mb-2">Document Access : </label>
+          <select className="w-[90%] py-1 px-2 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white">
+            <option selected value="">
+              Select Document Access Role
+            </option>
+            <option value="ROLE_ADMIN">ADMIN</option>
+            <option value="ROLE_USER">USER</option>
+            <option value="ROLE_MANAGEMENT">MANAGEMENT</option>
+          </select>
+          <label className="text-black mb-2">Choose Your Document : </label>
+          <input
+            className="w-[90%] py-1 px-2 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white"
+            type="file"
+          />
+          <div className="flex flex-wrap justify-end">
+            <button
+              className="bg-indigo-500 border mt-2 border-blue-500 px-2 py-1 rounded-md hover:shadow-lg hover:shadow-indigo-500/50 transition duration-500 shadow-none"
+              onClick={createFolder}
+            >
+              Upload
             </button>
           </div>
         </div>
@@ -175,6 +207,7 @@ const Browse = () => {
             {parentId !== 0 ? (
               <FontAwesomeIcon
                 className="shadow-xl text-sm text-white p-1 rounded-full border border-blue-500 cursor-pointer bg-blue-400"
+                onClick={() => setModal1Open(true)}
                 icon={faUpload}
               />
             ) : (
@@ -219,7 +252,6 @@ const Browse = () => {
             setPath={setPath}
             path={path}
             getFolder={getFolder}
-            
           />
         ) : (
           <Document
