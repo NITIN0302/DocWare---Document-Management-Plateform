@@ -5,6 +5,7 @@ const FolderSearch = () => {
   const [folderData, setFolderData] = useState([]);
   const [folderName, setFolderName] = useState("");
   const [folderId, setFolderId] = useState();
+  const [searchType, setSearchType] = useState("name");
 
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -27,7 +28,7 @@ const FolderSearch = () => {
         {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: `Bearer ${localStorage.getItem("Token")}`,
           },
         }
       );
@@ -50,7 +51,7 @@ const FolderSearch = () => {
         {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: `Bearer ${localStorage.getItem("Token")}`,
           },
         }
       );
@@ -69,11 +70,33 @@ const FolderSearch = () => {
   useEffect(() => {}, [folderData, folderId]);
 
   return (
-    <>
-      <div className="grid grid-col-1 md:grid-cols-2 mt-2">
+    <div className="bg-white p-2 mt-2 rounded-md">
+      <div className="grid grid-cols-4 md:grid-cols-8 p-1">
+        <div className="flex items-center gap-1">
+          <input
+            type="radio"
+            checked={searchType === "name"}
+            name="search"
+            onClick={() => setSearchType("name")}
+          />
+          <label className="text-xs">Search By Name</label>
+        </div>
+        <div className="flex items-center gap-1">
+          <input
+            type="radio"
+            name="search"
+            checked={searchType === "id"}
+            onClick={() => setSearchType("id")}
+          />
+          <label className="text-xs">Search By Id</label>
+        </div>
+      </div>
+      <div className="grid grid-col-1 md:grid-cols-1 mt-2">
         <div
           id="searchbyname"
-          className="border border-gray-300 rounded-md m-1 bg-white shadow-xl p-4"
+          className={`${
+            searchType == "name" ? "" : "hidden"
+          } border border-gray-300 rounded-md m-1 bg-white shadow-xl p-4`}
         >
           <h3>Search By Name</h3>
           <div className="flex flex-wrap">
@@ -81,15 +104,15 @@ const FolderSearch = () => {
               onChange={(e) => {
                 setFolderName(e.target.value);
               }}
-              className="md:w-[80%] my-2 border-2 border-blue-400 rounded-sm py-1 bg-gray-100 focus:border-blue-500 px-2"
+              className="md:w-[90%] my-2 border-2 border-blue-400 rounded-sm py-1 bg-gray-100 focus:border-blue-500 px-2"
               placeholder="Enter Folder Name"
             />
-            <div className="md:w-[20%] flex items-center flex-wrap justify-center">
+            <div className="md:w-[10%] flex items-center flex-wrap justify-center">
               <button
                 onClick={() => {
                   getFolderByName();
                 }}
-                className="text-xs bg-blue-500 py-1 px-1 rounded-md border border-blue-500 text-white"
+                className="text-xs bg-blue-500 py-2 px-2 rounded-md border border-blue-500 text-white"
               >
                 Search
               </button>
@@ -98,7 +121,9 @@ const FolderSearch = () => {
         </div>
         <div
           id="searchbyid"
-          className="border border-gray-300 rounded-md m-1 bg-white shadow-xl p-4"
+          className={`${
+            searchType == "id" ? "" : "hidden"
+          } border border-gray-300 rounded-md m-1 bg-white shadow-xl p-4`}
         >
           <h3>Search By ID</h3>
           <div className="flex flex-wrap">
@@ -106,15 +131,15 @@ const FolderSearch = () => {
               onChange={(e) => {
                 setFolderId(e.target.value);
               }}
-              className="md:w-[80%] my-2 border-2 border-blue-400 rounded-md py-1 bg-gray-100 focus:border-blue-500 px-2"
+              className="md:w-[90%] my-2 border-2 border-blue-400 rounded-md py-1 bg-gray-100 focus:border-blue-500 px-2"
               placeholder="Enter Folder ID"
             />
-            <div className="md:w-[20%] flex items-center flex-wrap justify-center">
+            <div className="md:w-[10%] flex items-center flex-wrap justify-center">
               <button
                 onClick={() => {
                   getFolderById();
                 }}
-                className="text-xs bg-blue-500 py-1 px-1 rounded-md border border-blue-500 text-white"
+                className="text-xs bg-blue-500 py-2 px-2 rounded-md border border-blue-500 text-white"
               >
                 Search
               </button>
@@ -134,7 +159,7 @@ const FolderSearch = () => {
           <div className="w-[20%] border-r border-black p-2">Created By</div>
           <div className="w-[40%] p-2">Created Date</div>
         </div>
-        <div className="bg-white h-72 overflow-auto no-scrollbar rounded-b-md border border-gray-400 shadow-xl">
+        <div className="bg-white h-60 overflow-auto no-scrollbar rounded-b-md border border-gray-200 shadow-xl">
           {folderData.map((ele, index) => (
             <div
               className="flex flex-wrap text-sm text-black bg-gray-200 border-b border-black"
@@ -157,7 +182,7 @@ const FolderSearch = () => {
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

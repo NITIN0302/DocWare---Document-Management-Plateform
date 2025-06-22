@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Sidebar } from "./Sidebar";
+import Select from "react-select";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUpload,
@@ -9,11 +10,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Modal from "./Modal";
 import useCounterContext from "../States/userContext";
-import Folder from "../SubComponent/Folder";
-import Document from "../SubComponent/Document";
+import Folder from "../Browse/Folder";
+import Document from "../Browse/Document";
 
 const Browse = () => {
   const [path, setPath] = useState([{ id: 0, name: "root" }]);
+  const [selectedOptions, setSelectedOptions] = useState([]);
   const [folderData, setFolderData] = useState([]);
   const [docData, setDocData] = useState([]);
   const [parentId, setParentId] = useState(0);
@@ -25,6 +27,11 @@ const Browse = () => {
   const [folderName, setFoldername] = useState("");
   const [docFol, setDocfol] = useState("F");
   const { username } = useCounterContext();
+  const options = [
+    { value: "ROLE_ADMIN", label: "ROLE_ADMIN" },
+    { value: "ROLE_USER", label: "ROLE_USER" },
+    { value: "ROLE_MANAGEMENT", label: "ROLE_MANAGEMENT" },
+  ];
 
   const getDocument = async () => {
     try {
@@ -64,7 +71,7 @@ const Browse = () => {
             parentId: parentId,
             createdBy: username,
             freeze: 0,
-            roles: [],
+            roles: selectedOptions,
           }),
         }
       );
@@ -79,7 +86,10 @@ const Browse = () => {
       setLoading(false);
     }
     setModalOpen(false);
+    setSelected([]);
   };
+
+  const uploadDocument = async () => {};
 
   const getFolder = async () => {
     try {
@@ -122,26 +132,34 @@ const Browse = () => {
     setDocfol("F");
   };
 
+  const handleClose = () => {
+    setModalOpen(false);
+    setModal1Open(false);
+    setSelectedOptions([]);
+  };
+
   return (
     <div className="h-[91%] w-full flex flex-wrap">
       <Modal
         isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={() => {
+          handleClose()
+        }}
         title="Create Folder"
       >
         <div className="">
           <label className="text-black mb-2">Folder Access : </label>
-          <select className="w-[90%] py-1 px-2 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white">
-            <option selected value="">
-              Select Folder Access Role
-            </option>
-            <option value="ROLE_ADMIN">ADMIN</option>
-            <option value="ROLE_USER">USER</option>
-            <option value="ROLE_MANAGEMENT">MANAGEMENT</option>
-          </select>
+          <Select
+            className="w-[90%] rounded-sm border border-blue-400 text-black bg-white"
+            isMulti
+            options={options}
+            value={selectedOptions}
+            onChange={setSelectedOptions}
+            placeholder="Select Role"
+          />
           <label className="text-black mb-2">Folder Name : </label>
           <input
-            className="w-[90%] py-1 px-2 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white"
+            className="w-[90%] px-1 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white"
             onChange={(e) => {
               setFoldername(e.target.value);
             }}
@@ -160,19 +178,21 @@ const Browse = () => {
 
       <Modal
         isOpen={modal1Open}
-        onClose={() => setModal1Open(false)}
+        onClose={() => {
+          handleClose()
+        }}
         title="Upload Document"
       >
         <div className="">
           <label className="text-black mb-2">Document Access : </label>
-          <select className="w-[90%] py-1 px-2 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white">
-            <option selected value="">
-              Select Document Access Role
-            </option>
-            <option value="ROLE_ADMIN">ADMIN</option>
-            <option value="ROLE_USER">USER</option>
-            <option value="ROLE_MANAGEMENT">MANAGEMENT</option>
-          </select>
+          <Select
+            className="w-[90%] rounded-sm border border-blue-400 text-black bg-white"
+            isMulti
+            options={options}
+            value={selectedOptions}
+            onChange={setSelectedOptions}
+            placeholder="Select Role"
+          />
           <label className="text-black mb-2">Choose Your Document : </label>
           <input
             className="w-[90%] py-1 px-2 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white"

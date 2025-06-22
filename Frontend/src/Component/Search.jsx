@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Sidebar } from "./Sidebar";
-import FolderSearch from "./FolderSearch";
-import DocumentSearch from "./DocumentSearch";
+import FolderSearch from "../Search/FolderSearch";
+import DocumentSearch from "../Search/DocumentSearch";
 
 const Search = () => {
   const [type, setType] = useState("D");

@@ -1,26 +1,20 @@
 import React from "react";
 
-const Customalert = ({ isOpen, onClose, title, children }) => {
-  if (!isOpen) return null;
-
+const CustomAlert = ({ status, message, code, onClose }) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-gray-300 rounded-sm border border-black w-full max-w-md shadow-lg relative">
-        <div className="flex flex-wrap bg-blue-400 rounded-t-sm items-center mb-2">
-          <h2 className="pl-2 w-[92.83%] py-2 h-10 text-xl bg-blue-400 text-black font-semibold rounded-t-sm">
-            {title}
-          </h2>
-          <button
-            onClick={onClose}
-            className="bg-red-500 bold w-6 h-6 rounded-md text-white hover:text-black"
-          >
-            &times;
-          </button>
+    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded shadow-lg z-50 w-[90%] max-w-xl">
+      <div className="flex justify-between items-start">
+        <div>
+          <p className="font-bold">Status: {status}</p>
+          <p>{message}</p>
+          <p className="text-sm text-gray-600">Code: {code}</p>
         </div>
-        <div className="m-2">{children}</div>
+        <button onClick={onClose} className="ml-4 text-xl font-bold text-red-700 hover:text-red-900">
+          &times;
+        </button>
       </div>
     </div>
   );
 };
 
-export default Customalert;
+export default CustomAlert;
