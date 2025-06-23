@@ -8,7 +8,7 @@ import {
   faLock,
   faLockOpen,
 } from "@fortawesome/free-solid-svg-icons";
-import Modal from "./Modal";
+import Modal from "../SubComponent/Modal";
 import useCounterContext from "../States/userContext";
 import Folder from "../Browse/Folder";
 import Document from "../Browse/Document";
