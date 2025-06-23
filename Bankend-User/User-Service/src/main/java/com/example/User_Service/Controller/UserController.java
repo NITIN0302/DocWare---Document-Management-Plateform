@@ -62,7 +62,7 @@ public class UserController {
         } catch (AuthenticationException ex) {
             resultResponse.setStatus("0");
             resultResponse.setErrorCode("101012");
-            resultResponse.setMessage("Invalid User Password");
+            resultResponse.setMessage("Invalid Username or Password");
             return ResponseEntity.ok(resultResponse);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
