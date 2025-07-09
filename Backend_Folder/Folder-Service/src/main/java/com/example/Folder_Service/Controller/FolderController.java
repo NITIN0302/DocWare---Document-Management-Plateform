@@ -119,4 +119,16 @@ public class FolderController {
         return ResponseEntity.ok(resultset);
     }
 
+    @GetMapping("/isfreezeFolder/{id}")
+    public ResponseEntity<?> isFolderFreeze(@PathVariable int id) {
+        CreateFolder response;
+        boolean isFreeze = folderService.isFolderFreeze(id);
+        if (isFreeze) {
+            response = new CreateFolder(1, "Parent Folder is Freeze", "");
+        } else {
+            response = new CreateFolder(1, "Parent Folder is Not Freeze", "");
+        }
+
+        return ResponseEntity.ok(response);
+    }
 }

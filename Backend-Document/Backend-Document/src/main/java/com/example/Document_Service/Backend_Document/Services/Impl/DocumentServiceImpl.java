@@ -7,12 +7,10 @@ import com.example.Document_Service.Backend_Document.Entity.RecycledDocument;
 import com.example.Document_Service.Backend_Document.FileModule.CreateFileName;
 import com.example.Document_Service.Backend_Document.FileModule.FileStreamHandler;
 import com.example.Document_Service.Backend_Document.Pojo.DeleteDocument;
+import com.example.Document_Service.Backend_Document.Pojo.FreezeStatus;
 import com.example.Document_Service.Backend_Document.Pojo.GetDocument;
 import com.example.Document_Service.Backend_Document.Pojo.UploadResponse;
-import com.example.Document_Service.Backend_Document.Services.ConfigService;
-import com.example.Document_Service.Backend_Document.Services.DocumentService;
-import com.example.Document_Service.Backend_Document.Services.GetRole;
-import com.example.Document_Service.Backend_Document.Services.RoleService;
+import com.example.Document_Service.Backend_Document.Services.*;
 import com.example.Document_Service.Backend_Document.repository.DocumentRepository;
 import com.example.Document_Service.Backend_Document.repository.RecycleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +38,22 @@ public class DocumentServiceImpl implements DocumentService {
     private GetRole userRole;
     @Autowired
     private RecycleRepository recycleRepository;
+    @Autowired
+    private GetFreezeStatus getFreezeStatus;
 
     @Override
     public UploadResponse uploadDocument(NodeDocument nodeDocument) {
         UploadResponse response = new UploadResponse();
         String fileString = nodeDocument.getFileString();
         List<String> roles = nodeDocument.getRoles();
+        ResponseEntity<?> freezeStatus = getFreezeStatus.isFolderFreeze(nodeDocument.getParentId());
+        FreezeStatus freezeResponse = (FreezeStatus) freezeStatus.getBody();
+        if (freezeResponse.getStatus() == 1) {
+            response.setStatus(0);
+            response.setMessage("Parent Folder is Freezed");
+            return response;
+        }
+
         String encodedName = CreateFileName.createName(nodeDocument);
         nodeDocument.setNbs_uuid(encodedName);
         Config cf = configService.getConfigValue();
@@ -167,6 +175,13 @@ public class DocumentServiceImpl implements DocumentService {
         Optional<NodeDocument> document = documentRepository.findById(uuid);
         DeleteDocument response = new DeleteDocument();
         List<NodeDocument> accessedDocument = new ArrayList<NodeDocument>();
+        ResponseEntity<?> freezeStatus = getFreezeStatus.isFolderFreeze(document.get().getParentId());
+        FreezeStatus freezeResponse = (FreezeStatus) freezeStatus.getBody();
+        if (freezeResponse.getStatus() == 1) {
+            response.setStatus("0");
+            response.setMessage("Parent Folder is Freezed");
+            return ResponseEntity.ok(response);
+        }
         List<String> userRoles = userRole.getRole(username);
         List<DocumentAccess> da = roleService.getAccessByuuid(document.get().getUuid());
         for (DocumentAccess documentAccess : da) {

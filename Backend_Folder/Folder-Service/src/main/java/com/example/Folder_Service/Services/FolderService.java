@@ -17,4 +17,6 @@ public interface FolderService{
     Optional<NodeFolder> getFolderById(String username,int id);
 
     NodeFolder freezeFolder(NodeFolder nd);
+
+    boolean isFolderFreeze(Integer id);
 }

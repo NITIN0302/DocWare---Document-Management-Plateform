@@ -107,4 +107,13 @@ public class FolderServiceImpl implements FolderService {
         return folderRepository.save(nd);
     }
 
+    @Override
+    public boolean isFolderFreeze(Integer id) {
+        Optional<NodeFolder> nd = folderRepository.findById(id);
+        if (nd.get().getFreeze() == 0) {
+            return false;
+        }
+        return true;
+    }
+
 }

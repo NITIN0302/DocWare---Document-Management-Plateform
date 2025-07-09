@@ -64,7 +64,7 @@ const Document = ({ docData, parentId, setDocData, getDocument }) => {
         {docData.length != 0 ? (
           docData.map((ele, index) => (
             <div
-              className="bg-gray-100 hover:bg-gray-200 flex flex-wrap text-sm  text-black  border-b border-gray-400"
+              className="bg-gray-100 hover:bg-gray-200 flex flex-wrap text-sm text-black  border-b border-gray-400"
               id={index}
             >
               <div className="w-[10%] border-r border-gray-400 items-center p-2">
