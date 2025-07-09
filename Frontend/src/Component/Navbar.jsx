@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
@@ -9,9 +9,14 @@ export const Navbar = () => {
   const { username, setUserName } = useCounterContext();
 
   const logout = () => {
+    localStorage.clear();
     setUserName("");
     navigate("/");
   };
+
+  useEffect(()=>{
+    setUserName(localStorage.getItem("username"));
+  },[]);
 
   return (
     <div className="h-12 text-black bg-white items-center px-4 flex flex-wrap justify-between ">
@@ -20,7 +25,7 @@ export const Navbar = () => {
       </div>
       {(username != "" && username != undefined) ? (
         <div className="items-center text-sm hidden md:block">
-          Welcome {username}, Last Login Time is - 17:15:49 21-04-2025
+          Welcome {username}, Last Login Time is - {localStorage.getItem("lastLoginTime")}
         </div>
       ) : (
         <div></div>

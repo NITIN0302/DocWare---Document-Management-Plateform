@@ -22,16 +22,34 @@ const Browse = () => {
   const [selectedValue, setSelectedValue] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const [modalOpen, setModalOpen] = useState(false);
   const [modal1Open, setModal1Open] = useState(false);
+
   const [folderName, setFoldername] = useState("");
+
+
+  const [docName,setDocName] = useState();
+  const [extension,setExtension] = useState();
+  const [fileString,setFileString] = useState();
+
   const [docFol, setDocfol] = useState("F");
-  const { username } = useCounterContext();
   const options = [
     { value: "ROLE_ADMIN", label: "ROLE_ADMIN" },
     { value: "ROLE_USER", label: "ROLE_USER" },
     { value: "ROLE_MANAGEMENT", label: "ROLE_MANAGEMENT" },
   ];
+
+  const fileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
 
   const getDocument = async () => {
     try {
@@ -56,41 +74,6 @@ const Browse = () => {
     }
   };
 
-  const createFolder = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:8081/FolderService/createFolder`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
-          },
-          body: JSON.stringify({
-            name: folderName,
-            parentId: parentId,
-            createdBy: username,
-            freeze: 0,
-            roles: selectedOptions,
-          }),
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const result = await response.json();
-      setFolderData(result);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-    setModalOpen(false);
-    setSelected([]);
-  };
-
-  const uploadDocument = async () => {};
-
   const getFolder = async () => {
     try {
       const response = await fetch(
@@ -112,6 +95,65 @@ const Browse = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const createFolder = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8081/FolderService/createFolder`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+          },
+          body: JSON.stringify({
+            name: folderName,
+            parentId: parentId,
+            createdBy: localStorage.getItem("username"),
+            freeze: 0,
+            roles: selectedOptions.map((role) => role.value),
+          }),
+        }
+      );
+      getFolder();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+    setModalOpen(false);
+    setSelectedOptions([]);
+  };
+
+  const uploadDocument = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8082/DocumentService/uploadDocument`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+          },
+          body: JSON.stringify({
+            name: docName,
+            parentId: parentId,
+            createdBy: localStorage.getItem("username"),
+            ext: extension,
+            fileString : fileString,
+            roles: selectedOptions.map((role) => role.value),
+          }),
+        }
+      );
+      getDocument();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+    setModal1Open(false);
+    setSelectedOptions([]);
   };
 
   useEffect(() => {
@@ -136,6 +178,24 @@ const Browse = () => {
     setModalOpen(false);
     setModal1Open(false);
     setSelectedOptions([]);
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        const base64String = await fileToBase64(file);
+        const fullName = file.name;
+        const lastDotIndex = fullName.lastIndexOf('.');
+        const nameWithoutExtension = fullName.substring(0, lastDotIndex);
+        const extension = fullName.substring(lastDotIndex + 1);
+        setFileString(base64String);
+        setDocName(nameWithoutExtension);
+        setExtension(extension);
+      } catch (error) {
+        console.error("Error converting file to base64:", error);
+      }
+    }
   };
 
   return (
@@ -197,11 +257,12 @@ const Browse = () => {
           <input
             className="w-[90%] py-1 px-2 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white"
             type="file"
+            onChange={handleFileChange}
           />
           <div className="flex flex-wrap justify-end">
             <button
               className="bg-indigo-500 border mt-2 border-blue-500 px-2 py-1 rounded-md hover:shadow-lg hover:shadow-indigo-500/50 transition duration-500 shadow-none"
-              onClick={createFolder}
+              onClick={uploadDocument}
             >
               Upload
             </button>

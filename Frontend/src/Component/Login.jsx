@@ -42,9 +42,13 @@ export const Login = () => {
       if (result.status == "1") {
         setUsername("");
         setPassword("");
+        localStorage.setItem("username",userName)
         localStorage.setItem("Token", result.data.jwtToken);
+        const now = new Date();
+        const formattedTime = now.toLocaleTimeString('en-GB') + ' ' + now.toLocaleDateString('en-GB');
+        localStorage.setItem("lastLoginTime",formattedTime)
         navigate("/home");
-        setUserName(userName);
+        setUserName(localStorage.getItem("username"));
       } else {
         setShowAlert(true);
         setMessage(result.message);
