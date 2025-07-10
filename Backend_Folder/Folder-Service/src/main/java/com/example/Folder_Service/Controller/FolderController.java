@@ -126,7 +126,7 @@ public class FolderController {
         if (isFreeze) {
             response = new CreateFolder(1, "Parent Folder is Freeze", "");
         } else {
-            response = new CreateFolder(1, "Parent Folder is Not Freeze", "");
+            response = new CreateFolder(0, "Parent Folder is Not Freeze", "");
         }
 
         return ResponseEntity.ok(response);
