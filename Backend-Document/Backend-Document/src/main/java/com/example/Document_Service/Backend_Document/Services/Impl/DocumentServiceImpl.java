@@ -6,6 +6,7 @@ import com.example.Document_Service.Backend_Document.Entity.NodeDocument;
 import com.example.Document_Service.Backend_Document.Entity.RecycledDocument;
 import com.example.Document_Service.Backend_Document.FileModule.CreateFileName;
 import com.example.Document_Service.Backend_Document.FileModule.FileStreamHandler;
+import com.example.Document_Service.Backend_Document.FileModule.S3FileHandler;
 import com.example.Document_Service.Backend_Document.Pojo.DeleteDocument;
 import com.example.Document_Service.Backend_Document.Pojo.FreezeStatus;
 import com.example.Document_Service.Backend_Document.Pojo.GetDocument;
@@ -40,6 +41,8 @@ public class DocumentServiceImpl implements DocumentService {
     private RecycleRepository recycleRepository;
     @Autowired
     private GetFreezeStatus getFreezeStatus;
+    @Autowired
+    private S3FileHandler s3FileHandler;
 
     @Override
     public UploadResponse uploadDocument(NodeDocument nodeDocument) {
@@ -48,6 +51,7 @@ public class DocumentServiceImpl implements DocumentService {
         List<String> roles = nodeDocument.getRoles();
         ResponseEntity<?> freezeStatus = getFreezeStatus.isFolderFreeze(nodeDocument.getParentId());
         FreezeStatus freezeResponse = (FreezeStatus) freezeStatus.getBody();
+
         if (freezeResponse.getStatus() == 1) {
             response.setStatus(0);
             response.setMessage("Parent Folder is Freezed");
@@ -57,8 +61,19 @@ public class DocumentServiceImpl implements DocumentService {
         String encodedName = CreateFileName.createName(nodeDocument);
         nodeDocument.setNbs_uuid(encodedName);
         Config cf = configService.getConfigValue();
-        String Location = cf.getVolumn() + nodeDocument.getName() + "-" + encodedName + ".txt";
-        FileStreamHandler.createAndWriteToFile(fileString, Location);
+        String s3Key = nodeDocument.getName() + "-" + encodedName + ".txt";
+        try {
+            s3FileHandler.uploadToS3(fileString, s3Key);
+        }
+        catch(Exception ex){
+            response.setStatus(0);
+            response.setMessage("S3 Bucket Access Right Issue");
+            return response;
+        }
+
+//        Code to write file on local system
+//        String Location = cf.getVolumn() + nodeDocument.getName() + "-" + encodedName + ".txt";
+//        FileStreamHandler.createAndWriteToFile(fileString, Location);
         NodeDocument nd = documentRepository.save(nodeDocument);
         for (String role : roles) {
             DocumentAccess da = new DocumentAccess();
@@ -84,6 +99,7 @@ public class DocumentServiceImpl implements DocumentService {
                 break;
             }
         }
+
         NodeDocument nd = documentRepository.findById(uuid).orElseThrow();
         Config cf = configService.getConfigValue();
         String filePath = cf.getVolumn() + nd.getName() + "-" + nd.getNbs_uuid() + ".txt";
