@@ -19,20 +19,15 @@ const Browse = () => {
   const [folderData, setFolderData] = useState([]);
   const [docData, setDocData] = useState([]);
   const [parentId, setParentId] = useState(0);
-  const [selectedValue, setSelectedValue] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [modalOpen, setModalOpen] = useState(false);
   const [modal1Open, setModal1Open] = useState(false);
-
   const [folderName, setFoldername] = useState("");
-
-
-  const [docName,setDocName] = useState();
-  const [extension,setExtension] = useState();
-  const [fileString,setFileString] = useState();
-
+  const [docName, setDocName] = useState();
+  const [extension, setExtension] = useState();
+  const [fileString, setFileString] = useState();
+  const [data, setData] = useState("F");
   const [docFol, setDocfol] = useState("F");
   const options = [
     { value: "ROLE_ADMIN", label: "ROLE_ADMIN" },
@@ -41,15 +36,15 @@ const Browse = () => {
   ];
 
   const fileToBase64 = (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
 
-    reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
 
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
-};
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
 
   const getDocument = async () => {
     try {
@@ -141,7 +136,7 @@ const Browse = () => {
             parentId: parentId,
             createdBy: localStorage.getItem("username"),
             ext: extension,
-            fileString : fileString,
+            fileString: fileString,
             roles: selectedOptions.map((role) => role.value),
           }),
         }
@@ -186,7 +181,7 @@ const Browse = () => {
       try {
         const base64String = await fileToBase64(file);
         const fullName = file.name;
-        const lastDotIndex = fullName.lastIndexOf('.');
+        const lastDotIndex = fullName.lastIndexOf(".");
         const nameWithoutExtension = fullName.substring(0, lastDotIndex);
         const extension = fullName.substring(lastDotIndex + 1);
         setFileString(base64String);
@@ -200,10 +195,10 @@ const Browse = () => {
 
   return (
     <div className="h-[91%] w-full flex flex-wrap">
-      <Modal
+      {/* <Modal
         isOpen={modalOpen}
         onClose={() => {
-          handleClose()
+          handleClose();
         }}
         title="Create Folder"
       >
@@ -234,12 +229,61 @@ const Browse = () => {
             </button>
           </div>
         </div>
-      </Modal>
+      </Modal> */}
 
       <Modal
+        isOpen={modalOpen}
+        onClose={() => {
+          handleClose();
+        }}
+        title="Create Folder"
+      >
+        <div className="space-y-4 px-2 py-1">
+          {/* Folder Access */}
+          <div>
+            <label className="text-sm font-medium text-gray-700 block mb-1">
+              Folder Access :
+            </label>
+            <Select
+              className="w-[90%] border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white text-black text-sm"
+              isMulti
+              options={options}
+              value={selectedOptions}
+              onChange={setSelectedOptions}
+              placeholder="Select Role"
+            />
+          </div>
+
+          {/* Folder Name */}
+          <div>
+            <label className="text-sm font-medium text-gray-700 block mb-1">
+              Folder Name :
+            </label>
+            <input
+              className="w-[90%] px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-black bg-white"
+              onChange={(e) => {
+                setFoldername(e.target.value);
+              }}
+              placeholder="Enter Folder Name"
+            />
+          </div>
+
+          {/* Create Button */}
+          <div className="flex justify-end pt-2">
+            <button
+              className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-md shadow-md transition duration-300"
+              onClick={createFolder}
+            >
+              Create
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* <Modal
         isOpen={modal1Open}
         onClose={() => {
-          handleClose()
+          handleClose();
         }}
         title="Upload Document"
       >
@@ -268,80 +312,204 @@ const Browse = () => {
             </button>
           </div>
         </div>
+      </Modal> */}
+
+      <Modal
+        isOpen={modal1Open}
+        onClose={() => {
+          handleClose();
+        }}
+        title="Upload Document"
+      >
+        <div className="space-y-4 px-2 py-1">
+          {/* Document Access */}
+          <div>
+            <label className="text-sm font-medium text-gray-700 block mb-1">
+              Document Access :
+            </label>
+            <Select
+              className="w-[90%] border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white text-black text-sm"
+              isMulti
+              options={options}
+              value={selectedOptions}
+              onChange={setSelectedOptions}
+              placeholder="Select Role"
+            />
+          </div>
+
+          {/* File Upload */}
+          <div>
+            <label className="text-sm font-medium text-gray-700 block mb-1">
+              Choose Your Document :
+            </label>
+            <input
+              type="file"
+              onChange={handleFileChange}
+              className="w-[90%] file:mr-4 file:py-2 file:px-4 file:border-0 file:rounded-md file:bg-indigo-500 file:text-white hover:file:bg-indigo-600 text-sm border border-gray-300 rounded-md shadow-sm bg-white text-black"
+            />
+          </div>
+
+          {/* Upload Button */}
+          <div className="flex justify-end pt-2">
+            <button
+              className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-md shadow-md transition duration-300"
+              onClick={uploadDocument}
+            >
+              Upload
+            </button>
+          </div>
+        </div>
       </Modal>
+
       <div className="w-[12%] md:w-[15%] bg-gray-50 pt-8 m-1 rounded-sm">
         <Sidebar />
       </div>
       <div className="bg-white text-black my-1 rounded-sm p-4 grow">
-        <div className="flex flex-wrap justify-between border-b-1 border-gray-400">
-          <h1 className="w-fit text-xl">Browse Your Folder</h1>
-          <div className="w-fit flex flex-wrap justify-around">
-            {parentId !== 0 ? (
-              <FontAwesomeIcon
-                className="cursor-pointer shadow-xl text-sm text-white mr-2 p-1 rounded-full border border-blue-500  bg-blue-400"
-                onClick={() => setModalOpen(true)}
-                icon={faFolderPlus}
+        <div className="flex items-center justify-between border-b border-gray-300 pb-2 mb-4">
+          <h1 className="text-2xl font-semibold text-indigo-600 tracking-wide">
+            📂 Browse Your Folder
+          </h1>
+        </div>
+        <div className="bg-gray-200 p-2 rounded-md mt-1">
+          <div className=" bg-white rounded-md flex flex-wrap justify-between ">
+            <div className="flex flex-wrap justify-start gap-2 p-2 rounded-lg shadow-inner">
+              <div
+                onClick={() => setDocfol("F")}
+                className="flex items-center cursor-pointer transition-transform duration-300 hover:scale-105"
+              >
+                <p
+                  className={`${
+                    docFol === "F"
+                      ? "bg-indigo-500 text-white shadow-md"
+                      : "bg-gray-100 text-gray-700 hover:bg-indigo-100"
+                  } text-sm px-5 py-1 rounded-full font-medium transition-colors duration-300`}
+                >
+                  📁 Folder
+                </p>
+              </div>
+              <div
+                onClick={() => setDocfol("D")}
+                className="flex items-center cursor-pointer transition-transform duration-300 hover:scale-105"
+              >
+                <p
+                  className={`${
+                    docFol === "D"
+                      ? "bg-indigo-500 text-white shadow-md"
+                      : "bg-gray-100 text-gray-700 hover:bg-indigo-100"
+                  } text-sm px-5 py-1 rounded-full font-medium transition-colors duration-300`}
+                >
+                  📄 Document
+                </p>
+              </div>
+            </div>
+
+            {/* <div className="flex flex-wrap">
+              <div className="p-2 flex items-center">
+                <select className="text-xs border border-black rounded-sm">
+                  <option default value="5">
+                    5
+                  </option>
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                </select>
+              </div>
+              <div className="w-fit flex flex-wrap justify-around p-2">
+                {parentId !== 0 ? (
+                  <FontAwesomeIcon
+                    className="cursor-pointer shadow-xl text-md text-green-400 mr-2 p-1"
+                    onClick={() => setModalOpen(true)}
+                    icon={faFolderPlus}
+                  />
+                ) : (
+                  ""
+                )}
+                {parentId !== 0 ? (
+                  <FontAwesomeIcon
+                    className="shadow-xl text-sm text-red-400 p-1 cursor-pointer"
+                    onClick={() => setModal1Open(true)}
+                    icon={faUpload}
+                  />
+                ) : (
+                  ""
+                )}
+              </div>
+            </div> */}
+            <div className="flex flex-wrap items-center justify-between gap-4 p-2 bg-gray-50 rounded-md shadow-sm">
+              {/* Dropdown Selector */}
+              <div className="flex items-center">
+                <label className="mr-2 text-sm text-gray-700 font-medium">
+                  Items per page:
+                </label>
+                <select className="text-sm border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                  <option default value="5">
+                    5
+                  </option>
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                </select>
+              </div>
+
+              {/* Action Icons */}
+              {parentId !== 0 && (
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => setModalOpen(true)}
+                    className="rounded-full  transition"
+                    title="Create Folder"
+                  >
+                    <FontAwesomeIcon
+                      icon={faFolderPlus}
+                      className="text-green-600 text-lg"
+                    />
+                  </button>
+                  <button
+                    onClick={() => setModal1Open(true)}
+                    className="rounded-full transition"
+                    title="Upload Document"
+                  >
+                    <FontAwesomeIcon
+                      icon={faUpload}
+                      className="text-red-500 text-lg"
+                    />
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="w-fit px-2 bg-white rounded-t-md mt-1">
+            {path.map((ele) => (
+              <p
+                className="hover:underline inline text-xs my-1 cursor-pointer text-blue-500"
+                onClick={() => {
+                  handleRouting(ele.id);
+                }}
+              >
+                /{ele.name}
+              </p>
+            ))}
+          </div>
+          <div className="bg-white p-1 rounded-b-md rounded-tr-md">
+            {docFol == "F" ? (
+              <Folder
+                folderData={folderData}
+                parentId={parentId}
+                setParentId={setParentId}
+                setPath={setPath}
+                path={path}
+                getFolder={getFolder}
               />
             ) : (
-              ""
-            )}
-            {parentId !== 0 ? (
-              <FontAwesomeIcon
-                className="shadow-xl text-sm text-white p-1 rounded-full border border-blue-500 cursor-pointer bg-blue-400"
-                onClick={() => setModal1Open(true)}
-                icon={faUpload}
+              <Document
+                docData={docData}
+                parentId={parentId}
+                setDocData={setDocData}
+                getDocument={getDocument}
               />
-            ) : (
-              ""
             )}
           </div>
         </div>
-        <div className="mt-2 flex flex-wrap justify-end">
-          <select
-            className="border-2 mr-2 w-40 border-black rounded-md"
-            onChange={(e) => setSelectedValue(e.target.value)}
-          >
-            <option default value="F">
-              Folder
-            </option>
-            <option value="D">Document</option>
-          </select>
-          <button
-            onClick={() => {
-              setDocfol(selectedValue);
-            }}
-            className="border border-blue-500 bg-blue-500 px-4 rounded-md text-white "
-          >
-            Go
-          </button>
-        </div>
-        {path.map((ele) => (
-          <p
-            className="hover:underline inline text-xs my-1 cursor-pointer text-blue-500"
-            onClick={() => {
-              handleRouting(ele.id);
-            }}
-          >
-            /{ele.name}
-          </p>
-        ))}
-        {docFol == "F" ? (
-          <Folder
-            folderData={folderData}
-            parentId={parentId}
-            setParentId={setParentId}
-            setPath={setPath}
-            path={path}
-            getFolder={getFolder}
-          />
-        ) : (
-          <Document
-            docData={docData}
-            parentId={parentId}
-            setDocData={setDocData}
-            getDocument={getDocument}
-          />
-        )}
       </div>
     </div>
   );

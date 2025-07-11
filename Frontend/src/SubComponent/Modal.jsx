@@ -6,8 +6,8 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 backdrop-blur-sm pt-12">
       <div className="bg-gray-100 rounded-lg border border-black w-full max-w-md shadow-2xl relative">
-        <div className="flex flex-wrap bg-blue-400 rounded-t-lg items-center mb-2">
-          <h2 className="pl-2 w-[92.83%] py-2 h-10 text-xl bg-blue-400 text-black font-semibold rounded-t-lg">
+        <div className="flex flex-wrap bg-indigo-600 rounded-t-lg items-center mb-2">
+          <h2 className="pl-2 w-[92.83%] py-2 h-10 text-xl  text-white font-semibold rounded-t-lg">
             {title}
           </h2>
           <button

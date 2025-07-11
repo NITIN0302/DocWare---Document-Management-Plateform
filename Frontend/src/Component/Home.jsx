@@ -1,7 +1,12 @@
 import React from "react";
 import { Sidebar } from "./Sidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHome, faCompass, faSearch, faRecycle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faHome,
+  faCompass,
+  faSearch,
+  faRecycle,
+} from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import useCounterContext from "../States/userContext";
 
@@ -26,7 +31,7 @@ const Home = () => {
         >
           <div className="w-fit mt-2 mx-auto px-2 rounded-full shadow-lg items-center flex flex-wrap justify-center">
             <FontAwesomeIcon
-              className="fa-2x shadow-xl text-white p-4 rounded-full border border-blue-500 bg-blue-400"
+              className="fa-2x shadow-xl text-white p-4 rounded-full border border-indigo-500 bg-indigo-500"
               icon={faHome}
             />
           </div>
@@ -43,7 +48,7 @@ const Home = () => {
         >
           <div className="w-fit mt-2 mx-auto px-2 rounded-full shadow-lg items-center flex flex-wrap justify-center">
             <FontAwesomeIcon
-              className="fa-2x shadow-xl text-white p-4 rounded-full border border-blue-500 bg-blue-400"
+              className="fa-2x shadow-xl text-white p-4 rounded-full border border-indigo-500 bg-indigo-500"
               icon={faCompass}
             />
           </div>
@@ -60,7 +65,7 @@ const Home = () => {
         >
           <div className="w-fit mt-2 mx-auto px-2 rounded-full shadow-lg items-center flex flex-wrap justify-center">
             <FontAwesomeIcon
-              className="fa-2x shadow-xl text-white p-4 rounded-full border border-blue-500 bg-blue-400"
+              className="fa-2x shadow-xl text-white p-4 rounded-full border border-indigo-500 bg-indigo-500"
               icon={faSearch}
             />
           </div>
@@ -77,7 +82,7 @@ const Home = () => {
         >
           <div className="w-fit mt-2 mx-auto px-2 rounded-full shadow-lg items-center flex flex-wrap justify-center">
             <FontAwesomeIcon
-              className="fa-2x shadow-xl text-white p-4 rounded-full border border-blue-500 bg-blue-400"
+              className="fa-2x shadow-xl text-white p-4 rounded-full border border-indigo-500 bg-indigo-500"
               icon={faRecycle}
             />
           </div>
