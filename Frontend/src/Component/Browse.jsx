@@ -349,7 +349,6 @@ const Browse = () => {
             />
           </div>
 
-          {/* Upload Button */}
           <div className="flex justify-end pt-2">
             <button
               className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-md shadow-md transition duration-300"
@@ -403,55 +402,19 @@ const Browse = () => {
               </div>
             </div>
 
-            {/* <div className="flex flex-wrap">
-              <div className="p-2 flex items-center">
-                <select className="text-xs border border-black rounded-sm">
-                  <option default value="5">
-                    5
-                  </option>
-                  <option value="10">10</option>
-                  <option value="15">15</option>
-                  <option value="20">20</option>
-                </select>
-              </div>
-              <div className="w-fit flex flex-wrap justify-around p-2">
-                {parentId !== 0 ? (
-                  <FontAwesomeIcon
-                    className="cursor-pointer shadow-xl text-md text-green-400 mr-2 p-1"
-                    onClick={() => setModalOpen(true)}
-                    icon={faFolderPlus}
-                  />
-                ) : (
-                  ""
-                )}
-                {parentId !== 0 ? (
-                  <FontAwesomeIcon
-                    className="shadow-xl text-sm text-red-400 p-1 cursor-pointer"
-                    onClick={() => setModal1Open(true)}
-                    icon={faUpload}
-                  />
-                ) : (
-                  ""
-                )}
-              </div>
-            </div> */}
             <div className="flex flex-wrap items-center justify-between gap-4 p-2 bg-gray-50 rounded-md shadow-sm">
-              {/* Dropdown Selector */}
               <div className="flex items-center">
                 <label className="mr-2 text-sm text-gray-700 font-medium">
                   Items per page:
                 </label>
                 <select className="text-sm border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-400">
-                  <option default value="5">
-                    5
-                  </option>
+                  <option default value="5">5</option>
                   <option value="10">10</option>
                   <option value="15">15</option>
                   <option value="20">20</option>
                 </select>
               </div>
 
-              {/* Action Icons */}
               {parentId !== 0 && (
                 <div className="flex items-center space-x-3">
                   <button
