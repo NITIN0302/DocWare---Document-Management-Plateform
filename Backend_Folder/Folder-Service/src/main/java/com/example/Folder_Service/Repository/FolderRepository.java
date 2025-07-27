@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface FolderRepository extends JpaRepository<NodeFolder, Integer> {
-    List<NodeFolder> findByName(String Name);
+    List<NodeFolder> findByNameContaining(String Name);
 
     List<NodeFolder> findByParentId(int parentId);
 }

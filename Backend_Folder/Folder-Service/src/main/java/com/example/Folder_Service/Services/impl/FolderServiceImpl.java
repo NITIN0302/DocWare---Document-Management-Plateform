@@ -32,7 +32,7 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public List<NodeFolder> getFolderByName(String username,String name) {
         List<String> userRoles =  userRole.getRole(username);
-        List<NodeFolder> allFolderByName = folderRepository.findByName(name);
+        List<NodeFolder> allFolderByName = folderRepository.findByNameContaining(name);
         List<NodeFolder> allAccessedFolder = new ArrayList<NodeFolder>();
         if(userRoles.contains("ROLE_ADMIN")){
             return allFolderByName;
