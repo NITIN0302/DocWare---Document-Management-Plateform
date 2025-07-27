@@ -149,7 +149,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public List<NodeDocument> getDocumentByName(String username, String docname) {
-        List<NodeDocument> allDocument = documentRepository.getDocumentByName(docname);
+        List<NodeDocument> allDocument = documentRepository.getDocumentByNameContaining(docname);
         List<NodeDocument> accessedDocument = new ArrayList<NodeDocument>();
         List<String> userRoles = userRole.getRole(username);
         if (userRoles.contains("ROLE_ADMIN")) {

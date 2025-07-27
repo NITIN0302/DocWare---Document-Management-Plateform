@@ -82,11 +82,17 @@ public class DocumentController {
 
     @GetMapping("/getDocumentByName/{docname}")
     public ResponseEntity<?> getDocumentByName(HttpServletRequest request,@PathVariable String docname){
+        ResultResponse resResponse = new ResultResponse();
         String token = request.getHeader("Authorization");
         String username = getUser.getUserByJwtToken(token);
         ResultResponse responseResult = validateUser.validateToken(token).getBody();
         if (responseResult.getStatus().equalsIgnoreCase("1")) {
             List<NodeDocument> response = documentService.getDocumentByName(username,docname);
+//            if(response.isEmpty()){
+//                resResponse.setMessage("No Document Found");
+//                resResponse.setStatus("1");
+//                resResponse.setErrorCode("111234");
+//            }
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.ok(responseResult);
