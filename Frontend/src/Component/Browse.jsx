@@ -15,6 +15,7 @@ import Document from "../Browse/Document";
 
 const Browse = () => {
   const [path, setPath] = useState([{ id: 0, name: "root" }]);
+  const [itemPerPage,setItemPerPage] = useState(5);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [folderData, setFolderData] = useState([]);
   const [docData, setDocData] = useState([]);
@@ -195,41 +196,6 @@ const Browse = () => {
 
   return (
     <div className="h-[91%] w-full flex flex-wrap">
-      {/* <Modal
-        isOpen={modalOpen}
-        onClose={() => {
-          handleClose();
-        }}
-        title="Create Folder"
-      >
-        <div className="">
-          <label className="text-black mb-2">Folder Access : </label>
-          <Select
-            className="w-[90%] rounded-sm border border-blue-400 text-black bg-white"
-            isMulti
-            options={options}
-            value={selectedOptions}
-            onChange={setSelectedOptions}
-            placeholder="Select Role"
-          />
-          <label className="text-black mb-2">Folder Name : </label>
-          <input
-            className="w-[90%] px-1 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white"
-            onChange={(e) => {
-              setFoldername(e.target.value);
-            }}
-            placeholder="Enter Folder Name"
-          />
-          <div className="flex flex-wrap justify-end">
-            <button
-              className="bg-indigo-500 border mt-2 border-blue-500 px-2 py-1 rounded-md hover:shadow-lg hover:shadow-indigo-500/50 transition duration-500 shadow-none"
-              onClick={createFolder}
-            >
-              Create
-            </button>
-          </div>
-        </div>
-      </Modal> */}
 
       <Modal
         isOpen={modalOpen}
@@ -279,40 +245,6 @@ const Browse = () => {
           </div>
         </div>
       </Modal>
-
-      {/* <Modal
-        isOpen={modal1Open}
-        onClose={() => {
-          handleClose();
-        }}
-        title="Upload Document"
-      >
-        <div className="">
-          <label className="text-black mb-2">Document Access : </label>
-          <Select
-            className="w-[90%] rounded-sm border border-blue-400 text-black bg-white"
-            isMulti
-            options={options}
-            value={selectedOptions}
-            onChange={setSelectedOptions}
-            placeholder="Select Role"
-          />
-          <label className="text-black mb-2">Choose Your Document : </label>
-          <input
-            className="w-[90%] py-1 px-2 outline-indigo-500 rounded-sm border border-blue-400 text-black bg-white"
-            type="file"
-            onChange={handleFileChange}
-          />
-          <div className="flex flex-wrap justify-end">
-            <button
-              className="bg-indigo-500 border mt-2 border-blue-500 px-2 py-1 rounded-md hover:shadow-lg hover:shadow-indigo-500/50 transition duration-500 shadow-none"
-              onClick={uploadDocument}
-            >
-              Upload
-            </button>
-          </div>
-        </div>
-      </Modal> */}
 
       <Modal
         isOpen={modal1Open}
@@ -407,12 +339,17 @@ const Browse = () => {
                 <label className="mr-2 text-sm text-gray-700 font-medium">
                   Items per page:
                 </label>
-                <select className="text-sm border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-400">
-                  <option default value="5">5</option>
+                <select
+                  defaultValue="5"
+                  onChange={(e) => setItemPerPage(e.target.value)}
+                  className="text-sm border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                >
+                  <option value="5">5</option>
                   <option value="10">10</option>
                   <option value="15">15</option>
                   <option value="20">20</option>
                 </select>
+
               </div>
 
               {parentId !== 0 && (
@@ -462,6 +399,7 @@ const Browse = () => {
                 setPath={setPath}
                 path={path}
                 getFolder={getFolder}
+                itemsPerPage={itemPerPage}
               />
             ) : (
               <Document
@@ -469,6 +407,7 @@ const Browse = () => {
                 parentId={parentId}
                 setDocData={setDocData}
                 getDocument={getDocument}
+                itemsPerPage={itemPerPage}
               />
             )}
           </div>

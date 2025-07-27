@@ -16,7 +16,6 @@ export const Navbar = () => {
   };
 
   useEffect(() => {
-    console.log(localStorage.getItem("username"));
     setUserName(localStorage.getItem("username"));
   }, []);
 
@@ -24,13 +23,12 @@ export const Navbar = () => {
     <div className="h-12 bg-white px-6 flex items-center justify-between shadow-md border-b border-indigo-100">
       <div className="text-2xl font-bold tracking-tight text-red-600 flex items-center">
         <span>
-          <img src={docware} className="h-8 w-8"/>
+          <img src={docware} className="border-2 border-blue-500 rounded-full h-8 w-8 mr-1"/>
         </span>
         <span>Doc</span>
         <span className="text-indigo-600">Ware</span>
       </div>
 
-      {/* Welcome Text */}
       {username !== "" && username !== undefined && username !== null ? (
         <div className="text-gray-700 text-sm hidden md:block">
           <span className="font-medium text-gray-500">Welcome</span>{" "}
@@ -44,7 +42,6 @@ export const Navbar = () => {
         <div></div>
       )}
 
-      {/* Logout Button */}
       {username !== "" && username !== undefined && username !== null ? (
         <div>
           <button
