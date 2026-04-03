@@ -8,6 +8,8 @@
         <option value="$PROJECT_DIR$/Backend_Folder/Folder-Service/pom.xml" />
         <option value="$PROJECT_DIR$/Backend_Document/Backend_Document/pom.xml" />
         <option value="$PROJECT_DIR$/Backend-Document/Backend-Document/pom.xml" />
+        <option value="$PROJECT_DIR$/ApiGateway/ApiGateway/pom.xml" />
+        <option value="$PROJECT_DIR$/ServiceRegistery/ServiceRegistery/pom.xml" />
       </list>
     </option>
   </component>

@@ -8,18 +8,33 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Backend-Document" />
         <module name="Folder-Service" />
+        <module name="ServiceRegistery" />
         <module name="User-Service" />
+      </profile>
+      <profile name="Annotation profile for ApiGateway" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.44/lombok-1.18.44.jar" />
+        </processorPath>
+        <module name="ApiGateway" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="Backend-Document (1)" target="1.8" />
       <module name="Backend_Document" target="17" />
+      <module name="User-Service (1)" target="1.5" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="ApiGateway" options="-parameters" />
       <module name="Backend-Document" options="-parameters" />
+      <module name="Backend-Document (1)" options="-parameters" />
       <module name="Backend_Document" options="-parameters" />
       <module name="Folder-Service" options="-parameters" />
+      <module name="ServiceRegistery" options="-parameters" />
       <module name="User-Service" options="-parameters" />
     </option>
   </component>

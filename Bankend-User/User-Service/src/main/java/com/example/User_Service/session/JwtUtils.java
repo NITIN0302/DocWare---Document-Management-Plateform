@@ -16,10 +16,10 @@ import io.jsonwebtoken.security.Keys;
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("${spring.app.jwtSecret}")
+    @Value("mySecretkey123kjsbfhbdfjbgjdflkglkhdshklgkjshlkdfgkh")
     private String jwtSecret;
 
-    @Value("${spring.app.jwtExpirationMs}")
+    @Value("2000000000")
     private int jwtExpirationMs;
 
     public String getJwtFromHeader(HttpServletRequest request) {

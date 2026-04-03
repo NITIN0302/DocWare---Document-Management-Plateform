@@ -61,19 +61,19 @@ public class DocumentServiceImpl implements DocumentService {
         String encodedName = CreateFileName.createName(nodeDocument);
         nodeDocument.setNbs_uuid(encodedName);
         Config cf = configService.getConfigValue();
-        String s3Key = nodeDocument.getName() + "-" + encodedName + ".txt";
-        try {
-            s3FileHandler.uploadToS3(fileString, s3Key);
-        }
-        catch(Exception ex){
-            response.setStatus(0);
-            response.setMessage("S3 Bucket Access Right Issue");
-            return response;
-        }
+//        String s3Key = nodeDocument.getName() + "-" + encodedName + ".txt";
+//        try {
+//            s3FileHandler.uploadToS3(fileString, s3Key);
+//        }
+//        catch(Exception ex){
+//            response.setStatus(0);
+//            response.setMessage("S3 Bucket Access Right Issue");
+//            return response;
+//        }
 
 //        Code to write file on local system
-//        String Location = cf.getVolumn() + nodeDocument.getName() + "-" + encodedName + ".txt";
-//        FileStreamHandler.createAndWriteToFile(fileString, Location);
+        String Location = cf.getVolumn() + nodeDocument.getName() + "-" + encodedName + ".txt";
+        FileStreamHandler.createAndWriteToFile(fileString, Location);
         NodeDocument nd = documentRepository.save(nodeDocument);
         for (String role : roles) {
             DocumentAccess da = new DocumentAccess();
