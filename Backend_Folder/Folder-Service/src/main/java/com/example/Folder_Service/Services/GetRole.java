@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 
-@FeignClient(url="localhost:8080",value="GetUserRole")
+@FeignClient(name = "USER-SERVICE",contextId="GetUserRole")
 public interface GetRole {
 
     @GetMapping("/UserService/getRole")

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 
-@FeignClient(url="localhost:8080",value="Validate-User")
+@FeignClient(name = "USER-SERVICE",contextId="Validate-User")
 public interface ValidateUser {
     @GetMapping("/UserService/validateToken")
     public ResponseEntity<ResultResponse> validateToken(@RequestHeader("Authorization") String token);
