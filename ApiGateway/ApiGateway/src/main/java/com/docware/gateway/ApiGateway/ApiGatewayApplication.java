@@ -1,5 +1,6 @@
 package com.docware.gateway.ApiGateway;
 
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
