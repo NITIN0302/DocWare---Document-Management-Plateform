@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 
-@FeignClient(url="localhost:8081",value="GetFreezeStatus")
+@FeignClient(name = "FOLDER-SERVICE",contextId="GetFreezeStatus")
 public interface GetFreezeStatus {
     @GetMapping("/FolderService/isfreezeFolder/{id}")
     public ResponseEntity<FreezeStatus> isFolderFreeze(@PathVariable int id);
