@@ -79,38 +79,6 @@ Client → API Gateway → Service Registry → Target Microservice → Response
 
 ---
 
-### 🔹 Service Registry
-
-* Maintains a registry of all running services
-* Enables dynamic discovery instead of hardcoded endpoints
-* Supports scalability by allowing multiple service instances
-
----
-
-### 🔹 User Service
-
-* Manages user-related functionality
-* Handles authentication and authorization logic
-* Provides user role information to other services
-
----
-
-### 🔹 Folder Service
-
-* Responsible for folder management
-* Supports creation and organization of folders
-* Interacts with User Service for role-based access control
-
----
-
-### 🔹 Document Service
-
-* Manages document operations
-* Handles storage, retrieval, and processing of documents
-* Can integrate with folder structure for organization
-
----
-
 ## 🔧 Tech Stack
 
 * Java 17
