@@ -10,6 +10,7 @@
         <option value="$PROJECT_DIR$/Backend-Document/Backend-Document/pom.xml" />
         <option value="$PROJECT_DIR$/ApiGateway/ApiGateway/pom.xml" />
         <option value="$PROJECT_DIR$/ServiceRegistery/ServiceRegistery/pom.xml" />
+        <option value="$PROJECT_DIR$/AccessRights/AccessRights/pom.xml" />
       </list>
     </option>
   </component>

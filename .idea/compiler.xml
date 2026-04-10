@@ -12,6 +12,15 @@
         <module name="ApiGateway" />
         <module name="User-Service" />
       </profile>
+      <profile name="Annotation profile for AccessRights" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.44/lombok-1.18.44.jar" />
+        </processorPath>
+        <module name="AccessRights" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Backend-Document (1)" target="1.8" />
@@ -21,6 +30,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="AccessRights" options="-parameters" />
       <module name="ApiGateway" options="-parameters" />
       <module name="Backend-Document" options="-parameters" />
       <module name="Backend-Document (1)" options="-parameters" />
