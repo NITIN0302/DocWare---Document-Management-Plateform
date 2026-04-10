@@ -1,9 +1,6 @@
 package com.EntitlementService.AccessRights.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 
 import java.util.Date;
 import java.util.List;
@@ -12,11 +9,13 @@ import java.util.List;
 @Table(name = "SDM_METADATA")
 public class MetaData {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(unique = true, nullable = false)
     private String name;
     private Date createdDate;
     @Transient
-    List<MetaProperties> metaData;
+    List<MetaProperties> metaDataProp;
     public MetaData(){}
     public MetaData(String name,Date createdDate){
         this.name = name;
@@ -47,11 +46,11 @@ public class MetaData {
         this.createdDate = createdDate;
     }
 
-    public List<MetaProperties> getMetaData() {
-        return metaData;
+    public List<MetaProperties> getMetaDataProp() {
+        return metaDataProp;
     }
 
-    public void setMetaDate(List<MetaProperties> metaData) {
-        this.metaData = metaData;
+    public void setMetaDateProp(List<MetaProperties> metaData) {
+        this.metaDataProp = metaData;
     }
 }

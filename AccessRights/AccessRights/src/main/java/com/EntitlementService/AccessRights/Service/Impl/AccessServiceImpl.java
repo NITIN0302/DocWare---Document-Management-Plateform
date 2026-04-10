@@ -5,6 +5,7 @@ import com.EntitlementService.AccessRights.Entity.MetaProperties;
 import com.EntitlementService.AccessRights.Repository.AccessPropRepo;
 import com.EntitlementService.AccessRights.Repository.AccessRepository;
 import com.EntitlementService.AccessRights.Service.AccessService;
+import com.EntitlementService.AccessRights.Service.DynamicCreation;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,21 +13,27 @@ import java.util.List;
 public class AccessServiceImpl implements AccessService {
 
     public AccessRepository accessRepository;
-    public AccessPropRepo accessPropRepo;;
+    public AccessPropRepo accessPropRepo;
+    public DynamicCreation dynamicCreation;
 
-    public AccessServiceImpl(AccessRepository accessRepository, AccessPropRepo accessPropRepo) {
+    public AccessServiceImpl(AccessRepository accessRepository,
+                             AccessPropRepo accessPropRepo,
+                             DynamicCreation dynamicCreation) {
         this.accessRepository = accessRepository;
         this.accessPropRepo = accessPropRepo;
+        this.dynamicCreation = dynamicCreation;
     }
 
     @Override
     public void createMetadata(MetaData metaData) {
-        MetaData md = accessRepository.save(metaData);
-        int metadataId = md.getId();
-        List<MetaProperties> properties = metaData.getMetaData();
-        for(MetaProperties metaProperties : properties){
-            metaProperties.setId(metadataId);
-            accessPropRepo.save(metaProperties);
+        try{
+            MetaData md = accessRepository.save(metaData);
+            dynamicCreation.createMetadataTable(metaData);
         }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+
     }
 }
