@@ -31,9 +31,7 @@ public class AccessServiceImpl implements AccessService {
             dynamicCreation.createMetadataTable(metaData);
         }
         catch(Exception e){
-            e.printStackTrace();
+            throw e;
         }
-
-
     }
 }

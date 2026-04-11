@@ -16,6 +16,8 @@ public class MetaData {
     private Date createdDate;
     @Transient
     List<MetaProperties> metaDataProp;
+    @Transient
+    private int docid;
     public MetaData(){}
     public MetaData(String name,Date createdDate){
         this.name = name;
@@ -52,5 +54,12 @@ public class MetaData {
 
     public void setMetaDateProp(List<MetaProperties> metaData) {
         this.metaDataProp = metaData;
+    }
+
+    public int getDocid() {
+        return docid;
+    }
+    public void setDocid(int docid) {
+        this.docid = docid;
     }
 }

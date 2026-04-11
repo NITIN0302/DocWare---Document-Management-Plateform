@@ -8,4 +8,5 @@ import java.net.InterfaceAddress;
 @Service
 public interface DynamicCreation {
     public boolean createMetadataTable(MetaData metaData);
+    public boolean saveMetadataDoc(MetaData metaData);
 }

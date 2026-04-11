@@ -1,12 +1,12 @@
 package com.EntitlementService.AccessRights.Pojo;
 
-public class CreateMetadata {
+public class CommonResponse {
     private String status;
     public String message;
     public String errorCode;
-    public CreateMetadata() {
+    public CommonResponse() {
     }
-    public CreateMetadata(String status, String message,String errorCode) {
+    public CommonResponse(String status, String message,String errorCode) {
         this.status = status;
         this.message = message;
         this.errorCode = errorCode;

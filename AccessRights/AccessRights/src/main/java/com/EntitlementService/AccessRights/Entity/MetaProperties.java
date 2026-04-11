@@ -11,6 +11,7 @@ public class MetaProperties {
     private int id;
     private int metadataId;
     private String propName;
+    private String propValue;
     private String type;
     private int size;
 
@@ -53,5 +54,13 @@ public class MetaProperties {
 
     public void setSize(int size) {
         this.size = size;
+    }
+
+    public String getPropValue() {
+        return propValue;
+    }
+
+    public void setPropValue(String propValue) {
+        this.propValue = propValue;
     }
 }
