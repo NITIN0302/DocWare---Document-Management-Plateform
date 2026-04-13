@@ -2,7 +2,7 @@ package com.EntitlementService.AccessRights.Service.Impl;
 
 import com.EntitlementService.AccessRights.Entity.MetaData;
 import com.EntitlementService.AccessRights.Entity.MetaProperties;
-import com.EntitlementService.AccessRights.Repository.AccessPropRepo;
+import com.EntitlementService.AccessRights.Repository.MetaUserMap;
 import com.EntitlementService.AccessRights.Repository.AccessRepository;
 import com.EntitlementService.AccessRights.Service.AccessService;
 import com.EntitlementService.AccessRights.Service.DynamicCreation;
@@ -13,11 +13,11 @@ import java.util.List;
 public class AccessServiceImpl implements AccessService {
 
     public AccessRepository accessRepository;
-    public AccessPropRepo accessPropRepo;
+    public MetaUserMap accessPropRepo;
     public DynamicCreation dynamicCreation;
 
     public AccessServiceImpl(AccessRepository accessRepository,
-                             AccessPropRepo accessPropRepo,
+                             MetaUserMap accessPropRepo,
                              DynamicCreation dynamicCreation) {
         this.accessRepository = accessRepository;
         this.accessPropRepo = accessPropRepo;
