@@ -9,6 +9,7 @@ import com.example.Folder_Service.Services.FolderService;
 import com.example.Folder_Service.Services.GetUser;
 import com.example.Folder_Service.Services.ValidateUser;
 import com.example.Folder_Service.Services.impl.FolderServiceImpl;
+import com.example.Folder_Service.Session.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,32 +28,38 @@ public class FolderController {
     public final ValidateUser validateUser;
     @Autowired
     private GetUser getUser;
+    private JwtUtils jwtUtils;
 
-    public FolderController(FolderServiceImpl folderService, ValidateUser validateUser) {
+    public FolderController(FolderServiceImpl folderService, ValidateUser validateUser, JwtUtils jwtUtils) {
         this.folderService = folderService;
         this.validateUser = validateUser;
+        this.jwtUtils = jwtUtils;
     }
 
     @PostMapping("/getFolderByName/{name}")
     public ResponseEntity<?> getFolderByName(HttpServletRequest request, @PathVariable String name) {
+        ResultResponse resultResponse = new ResultResponse();
         String token = request.getHeader("Authorization");
         String username = getUser.getUserByJwtToken(token);
-        ResultResponse response = validateUser.validateToken(token).getBody();
-        if (response.getStatus().equalsIgnoreCase("1")) {
+        boolean validToken = jwtUtils.validateJwtToken(token);
+        if (validToken) {
             List<NodeFolder> folders = folderService.getFolderByName(username, name);
             return ResponseEntity.ok(folders);
         } else {
-            return ResponseEntity.ok(response);
+            resultResponse.setStatus("0");
+            resultResponse.setMessage("USER SESSION EXPIRED");
         }
+        return ResponseEntity.ok(resultResponse);
     }
 
     @PostMapping("/createFolder")
     public ResponseEntity<?> createFolder(HttpServletRequest request, @RequestBody NodeFolder nodeFolder) {
         CreateFolder response;
+        ResultResponse resultResponse = new ResultResponse();
         String token = request.getHeader("Authorization");
         String username = getUser.getUserByJwtToken(token);
-        ResultResponse responseResult = validateUser.validateToken(token).getBody();
-        if (responseResult.getStatus().equalsIgnoreCase("1")) {
+        boolean validToken = jwtUtils.validateJwtToken(token);
+        if (validToken) {
             List<NodeFolder> folders = folderService.getFolderByName(username, nodeFolder.getName());
             if (!folders.isEmpty()) {
                 response = new CreateFolder(0, "Folder Already Exists", "", folders);
@@ -63,33 +70,41 @@ public class FolderController {
             response = new CreateFolder(1, "Folder Created Successfully", "", fm);
             return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.ok(responseResult);
+            resultResponse.setStatus("0");
+            resultResponse.setMessage("USER SESSION EXPIRED");
         }
+        return ResponseEntity.ok(resultResponse);
     }
 
     @GetMapping("/getFolder/{parentId}")
     public ResponseEntity<?> getFolder(HttpServletRequest request, @PathVariable int parentId) {
+        ResultResponse resultResponse = new ResultResponse();
         String token = request.getHeader("Authorization");
         String username = getUser.getUserByJwtToken(token);
-        ResultResponse response = validateUser.validateToken(token).getBody();
-        if (response.getStatus().equalsIgnoreCase("1")) {
+        boolean validToken = jwtUtils.validateJwtToken(token);
+        if (validToken) {
             List<NodeFolder> folders = folderService.getFolder(username, parentId);
             return ResponseEntity.ok(folders);
         } else {
-            return ResponseEntity.ok(response);
+            resultResponse.setStatus("0");
+            resultResponse.setMessage("USER SESSION EXPIRED");
         }
+        return ResponseEntity.ok(resultResponse);
     }
 
     @PostMapping("/getFolderById/{id}")
     public ResponseEntity<?> getFolderById(HttpServletRequest request, @PathVariable int id) {
+        ResultResponse resultResponse = new ResultResponse();
         String token = request.getHeader("Authorization");
         String username = getUser.getUserByJwtToken(token);
-        ResultResponse response = validateUser.validateToken(token).getBody();
+        boolean validToken = jwtUtils.validateJwtToken(token);
         Optional<NodeFolder> folder;
-        if (response.getStatus().equalsIgnoreCase("1")) {
+        if (validToken) {
             folder = folderService.getFolderById(username, id);
         } else {
-            return ResponseEntity.ok(response);
+            resultResponse.setStatus("0");
+            resultResponse.setMessage("USER SESSION EXPIRED");
+            return ResponseEntity.ok(resultResponse);
         }
         return folder.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -99,10 +114,11 @@ public class FolderController {
     @PostMapping("/freezeFolder/{id}")
     public ResponseEntity<?> freezeFolderById(HttpServletRequest request, @PathVariable int id) {
         Response resultset = new Response();
+        ResultResponse resultResponse = new ResultResponse();
         String token = request.getHeader("Authorization");
         String username = getUser.getUserByJwtToken(token);
-        ResultResponse response = validateUser.validateToken(token).getBody();
-        if (response.getStatus().equalsIgnoreCase("1")) {
+        boolean validToken = jwtUtils.validateJwtToken(token);
+        if (validToken) {
             Optional<NodeFolder> folder = folderService.getFolderById(username, id);
             int freezeStatus = folder.get().getFreeze();
             folder.get().setFreeze(freezeStatus == 1 ? 0 : 1);
@@ -113,7 +129,9 @@ public class FolderController {
                 resultset = new Response(1, "Folder is Freezed", "");
             }
         } else {
-            return ResponseEntity.ok(response);
+            resultResponse.setStatus("0");
+            resultResponse.setMessage("USER SESSION EXPIRED");
+            return ResponseEntity.ok(resultResponse);
         }
 
         return ResponseEntity.ok(resultset);

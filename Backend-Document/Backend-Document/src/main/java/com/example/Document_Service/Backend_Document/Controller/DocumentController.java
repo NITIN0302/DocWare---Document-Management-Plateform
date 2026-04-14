@@ -9,8 +9,7 @@ import com.example.Document_Service.Backend_Document.Pojo.UploadResponse;
 import com.example.Document_Service.Backend_Document.Services.GetUser;
 import com.example.Document_Service.Backend_Document.Services.Impl.DocumentServiceImpl;
 import com.example.Document_Service.Backend_Document.Services.Impl.RecycleServiceImpl;
-import com.example.Document_Service.Backend_Document.Services.RecycleService;
-import com.example.Document_Service.Backend_Document.Services.ValidateUser;
+import com.example.Document_Service.Backend_Document.session.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,129 +25,144 @@ public class DocumentController {
     public DocumentServiceImpl documentService;
 
     @Autowired
-    public ValidateUser validateUser;
-
-    @Autowired
     public GetUser getUser;
 
     @Autowired
     public RecycleServiceImpl recycleService;
 
+    @Autowired
+    public JwtUtils jwtUtils;
 
-    public DocumentController(DocumentServiceImpl documentService, ValidateUser validateUser) {
+
+    public DocumentController(DocumentServiceImpl documentService) {
         this.documentService = documentService;
-        this.validateUser = validateUser;
     }
 
     @PostMapping("/uploadDocument")
-    public ResponseEntity<?> uploadDocument(HttpServletRequest request, @RequestBody NodeDocument nodeDocument) {
+    public ResponseEntity<?> uploadDocument(HttpServletRequest request, @RequestBody NodeDocument nodeDocument) throws Exception {
         UploadResponse response = new UploadResponse();
         String token = request.getHeader("Authorization");
-        ResultResponse responseResult = validateUser.validateToken(token).getBody();
-        if (responseResult.getStatus().equalsIgnoreCase("1")) {
+        boolean isValid = jwtUtils.validateJwtToken(token);
+        if (isValid) {
             response = documentService.uploadDocument(nodeDocument);
             return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.ok(responseResult);
+            response.setStatus(0);
+            response.setMessage("USER SESSION EXPIRED");
         }
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/getDocumentContent/{id}")
-    public ResponseEntity<?> getDocumentContent(HttpServletRequest request, @PathVariable Long id) {
+    public ResponseEntity<?> getDocumentContent(HttpServletRequest request, @PathVariable Long id) throws Exception {
         GetDocument response = new GetDocument();
         String token = request.getHeader("Authorization");
         String username = getUser.getUserByJwtToken(token);
-        ResultResponse responseResult = validateUser.validateToken(token).getBody();
-        if (responseResult.getStatus().equalsIgnoreCase("1")) {
+        boolean isValid = jwtUtils.validateJwtToken(token);
+        if (isValid) {
             response = documentService.getDocumentContent(username,id);
-            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.ok(responseResult);
+            response.setStatus(0);
+            response.setMessage("USER SESSION EXPIRED");
         }
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/getDocument/{parentId}")
-    public ResponseEntity<?> getDocument(HttpServletRequest request, @PathVariable Long parentId) {
+    public ResponseEntity<?> getDocument(HttpServletRequest request, @PathVariable Long parentId) throws Exception {
+        GetDocument respons = new GetDocument();
         String token = request.getHeader("Authorization");
         String username = getUser.getUserByJwtToken(token);
-        ResultResponse responseResult = validateUser.validateToken(token).getBody();
-        if (responseResult.getStatus().equalsIgnoreCase("1")) {
+        boolean isValid = jwtUtils.validateJwtToken(token);
+        if (isValid) {
             List<NodeDocument> response = documentService.getDocument(username,parentId);
             return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.ok(responseResult);
+            respons.setStatus(0);
+            respons.setMessage("USER SESSION EXPIRED");
         }
+        return ResponseEntity.ok(respons);
     }
 
     @GetMapping("/getDocumentByName/{docname}")
-    public ResponseEntity<?> getDocumentByName(HttpServletRequest request,@PathVariable String docname){
+    public ResponseEntity<?> getDocumentByName(HttpServletRequest request,@PathVariable String docname) throws Exception {
         ResultResponse resResponse = new ResultResponse();
         String token = request.getHeader("Authorization");
         String username = getUser.getUserByJwtToken(token);
-        ResultResponse responseResult = validateUser.validateToken(token).getBody();
-        if (responseResult.getStatus().equalsIgnoreCase("1")) {
+        boolean isValid = jwtUtils.validateJwtToken(token);
+        if (isValid) {
             List<NodeDocument> response = documentService.getDocumentByName(username,docname);
-//            if(response.isEmpty()){
-//                resResponse.setMessage("No Document Found");
-//                resResponse.setStatus("1");
-//                resResponse.setErrorCode("111234");
-//            }
             return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.ok(responseResult);
+            resResponse.setStatus("0");
+            resResponse.setMessage("USER SESSION EXPIRED");
+
         }
+        return ResponseEntity.ok(resResponse);
     }
 
     @GetMapping("/getDocumentById/{uuid}")
-    public ResponseEntity<?> getDocumentByUuid(HttpServletRequest request,@PathVariable Long uuid){
+    public ResponseEntity<?> getDocumentByUuid(HttpServletRequest request,@PathVariable Long uuid) throws Exception {
+        GetDocument resp = new GetDocument();
         String token = request.getHeader("Authorization");
         String username = getUser.getUserByJwtToken(token);
-        ResultResponse responseResult = validateUser.validateToken(token).getBody();
-        if (responseResult.getStatus().equalsIgnoreCase("1")) {
+        boolean isValid = jwtUtils.validateJwtToken(token);
+        if (isValid) {
             List<NodeDocument> response = documentService.getDocumentByUuid(username,uuid);
             return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.ok(responseResult);
+            resp.setStatus(0);
+            resp.setMessage("USER SESSION EXPIRED");
         }
+        return ResponseEntity.ok(resp);
     }
 
     @GetMapping("/deleteDocumentById/{uuid}")
-    public ResponseEntity<?> deleteDocumentByUuid(HttpServletRequest request,@PathVariable Long uuid){
+    public ResponseEntity<?> deleteDocumentByUuid(HttpServletRequest request,@PathVariable Long uuid) throws Exception {
+        ResultResponse resp = new ResultResponse();
         String token = request.getHeader("Authorization");
         String username = getUser.getUserByJwtToken(token);
-        ResultResponse responseResult = validateUser.validateToken(token).getBody();
-        if (responseResult.getStatus().equalsIgnoreCase("1")) {
+        boolean isValid = jwtUtils.validateJwtToken(token.substring(7));
+        if (isValid) {
             DeleteDocument response = documentService.deleteDocumentByUuid(username,uuid).getBody();
             return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.ok(responseResult);
+            resp.setStatus("0");
+            resp.setMessage("USER SESSION EXPIRED");
         }
+        return ResponseEntity.ok(resp);
     }
 
     @GetMapping("/getAllRecycledDocument")
-    public ResponseEntity<?> getAllRecycleDocument(HttpServletRequest request){
+    public ResponseEntity<?> getAllRecycleDocument(HttpServletRequest request) throws Exception {
+        ResultResponse resp = new ResultResponse();
         String token = request.getHeader("Authorization");
         String username = getUser.getUserByJwtToken(token);
-        ResultResponse responseResult = validateUser.validateToken(token).getBody();
-        if (responseResult.getStatus().equalsIgnoreCase("1")) {
+        boolean isValid = jwtUtils.validateJwtToken(token.substring(7));
+        if (isValid) {
             List<RecycledDocument> response = recycleService.getAllDeletedDocument(username);
             return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.ok(responseResult);
+            resp.setStatus("0");
+            resp.setMessage("USER SESSION EXPIRED");
         }
+        return ResponseEntity.ok(resp);
     }
 
     @GetMapping("/recycleDocument/{uuid}")
-    public ResponseEntity<?> recycleDocument(HttpServletRequest request,@PathVariable Long uuid){
+    public ResponseEntity<?> recycleDocument(HttpServletRequest request,@PathVariable Long uuid) throws Exception {
+        ResultResponse resp = new ResultResponse();
         String token = request.getHeader("Authorization");
         String username = getUser.getUserByJwtToken(token);
-        ResultResponse responseResult = validateUser.validateToken(token).getBody();
-        if (responseResult.getStatus().equalsIgnoreCase("1")) {
+        boolean isValid = jwtUtils.validateJwtToken(token.substring(7));
+        if (isValid) {
             DeleteDocument response = recycleService.recycleDocument(username,uuid);
             return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.ok(responseResult);
+            resp.setStatus("0");
+            resp.setMessage("USER SESSION EXPIRED");
         }
+        return ResponseEntity.ok(resp);
     }
 
 }

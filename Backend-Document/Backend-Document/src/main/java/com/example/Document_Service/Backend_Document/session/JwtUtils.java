@@ -1,0 +1,65 @@
+package com.example.Document_Service.Backend_Document.session;
+
+import java.security.Key;
+import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+
+@Component
+public class JwtUtils {
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
+
+    @Value("mySecretkey123kjsbfhbdfjbgjdflkglkhdshklgkjshlkdfgkh")
+    private String jwtSecret;
+
+    @Value("2000000000")
+    private int jwtExpirationMs;
+
+    public String getJwtFromHeader(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        logger.debug("Authorization Header: {}", bearerToken);
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+    private Key key() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+    }
+
+    public String getUserNameFromJwtToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key()).build()
+                .parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public boolean validateJwtToken(String authToken) throws Exception {
+        boolean valid = false;
+        try {
+            Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken.substring(7));
+            valid = true;
+        } catch (MalformedJwtException e) {
+            logger.error("Invalid JWT token: {}", e.getMessage());
+            throw new Exception(new String("INVALID TOKEN"));
+        } catch (ExpiredJwtException e) {
+            logger.error("JWT token is expired: {}", e.getMessage());
+            throw new Exception(new String("TOKEN EXPIRED"));
+        } catch (UnsupportedJwtException e) {
+            logger.error("JWT token is unsupported: {}", e.getMessage());
+            throw new Exception(new String("UNSUPPORTED USER"));
+        } catch (IllegalArgumentException e) {
+            logger.error("JWT claims string is empty: {}", e.getMessage());
+            throw new Exception(new String("INVALID TOKEN"));
+        } catch(Exception e){
+            throw new Exception(new String("INVALID USER"));
+        }finally {
+            return valid;
+        }
+    }
+}
+
