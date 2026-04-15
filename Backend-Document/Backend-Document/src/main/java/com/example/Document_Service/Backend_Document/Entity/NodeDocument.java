@@ -23,6 +23,16 @@ public class NodeDocument {
     @Transient
     private List<String> roles;
     private String isDeleted;
+    @Transient
+    private MetaData metaData;
+
+    public MetaData getMetaData() {
+        return metaData;
+    }
+
+    public void setMetaData(MetaData metaData) {
+        this.metaData = metaData;
+    }
 
     public String getIsDeleted() {
         return isDeleted;

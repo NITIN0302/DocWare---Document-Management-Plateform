@@ -1,14 +1,13 @@
 package com.example.Document_Service.Backend_Document.Controller;
 
+import com.example.Document_Service.Backend_Document.Entity.MetaData;
 import com.example.Document_Service.Backend_Document.Entity.NodeDocument;
 import com.example.Document_Service.Backend_Document.Entity.RecycledDocument;
-import com.example.Document_Service.Backend_Document.Pojo.DeleteDocument;
-import com.example.Document_Service.Backend_Document.Pojo.GetDocument;
-import com.example.Document_Service.Backend_Document.Pojo.ResultResponse;
-import com.example.Document_Service.Backend_Document.Pojo.UploadResponse;
+import com.example.Document_Service.Backend_Document.Pojo.*;
 import com.example.Document_Service.Backend_Document.Services.GetUser;
 import com.example.Document_Service.Backend_Document.Services.Impl.DocumentServiceImpl;
 import com.example.Document_Service.Backend_Document.Services.Impl.RecycleServiceImpl;
+import com.example.Document_Service.Backend_Document.Services.SaveMetaData;
 import com.example.Document_Service.Backend_Document.session.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +32,9 @@ public class DocumentController {
     @Autowired
     public JwtUtils jwtUtils;
 
+    @Autowired
+    public SaveMetaData saveMetaData;
+
 
     public DocumentController(DocumentServiceImpl documentService) {
         this.documentService = documentService;
@@ -41,10 +43,15 @@ public class DocumentController {
     @PostMapping("/uploadDocument")
     public ResponseEntity<?> uploadDocument(HttpServletRequest request, @RequestBody NodeDocument nodeDocument) throws Exception {
         UploadResponse response = new UploadResponse();
+        CommonResponse commonResponse = new CommonResponse();
         String token = request.getHeader("Authorization");
         boolean isValid = jwtUtils.validateJwtToken(token);
         if (isValid) {
+            System.out.println(commonResponse.getMessage());
             response = documentService.uploadDocument(nodeDocument);
+            MetaData metaData = nodeDocument.getMetaData();
+            metaData.setDocid(response.getUuid().toString());
+            commonResponse = saveMetaData.saveMetadataInfo(nodeDocument.getMetaData()).getBody();
             return ResponseEntity.ok(response);
         } else {
             response.setStatus(0);

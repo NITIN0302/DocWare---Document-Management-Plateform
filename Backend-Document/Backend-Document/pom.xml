@@ -92,6 +92,12 @@
             <version>0.11.5</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.EntitlementService</groupId>
+            <artifactId>AccessRights</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 	<dependencyManagement>
 		<dependencies>
