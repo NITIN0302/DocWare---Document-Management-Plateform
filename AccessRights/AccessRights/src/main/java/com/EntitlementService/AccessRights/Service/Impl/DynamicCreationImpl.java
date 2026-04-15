@@ -44,7 +44,6 @@ public class DynamicCreationImpl implements DynamicCreation {
         boolean result = false;
         try {
             StringBuilder query = createQueryForMetadata(metaData);
-            System.out.println("Query to Create Table:" + query.toString());
             entityManager.createNativeQuery(query.toString()).executeUpdate();
             result = true;
         }catch(Exception ex){
@@ -66,7 +65,6 @@ public class DynamicCreationImpl implements DynamicCreation {
                 paramMap.put(prop.getPropName(),prop.getPropValue());
             }
             Query query = InsertUtils.createInsertQuery(entityManager,tableName,paramMap);
-            System.out.println("Query to Save DocMetadata:" + query.toString());
             query.executeUpdate();
             result = true;
         }catch(Exception ex){

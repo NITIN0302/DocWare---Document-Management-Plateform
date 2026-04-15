@@ -18,6 +18,8 @@ public class MetaData {
     List<MetaProperties> metaDataProp;
     @Transient
     private String docid;
+
+
     public MetaData(){}
     public MetaData(String name,Date createdDate){
         this.name = name;
