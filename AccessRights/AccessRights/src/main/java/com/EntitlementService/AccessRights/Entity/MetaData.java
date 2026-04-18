@@ -18,6 +18,9 @@ public class MetaData {
     List<MetaProperties> metaDataProp;
     @Transient
     private String docid;
+    @OneToMany(mappedBy = "metaData")
+    private List<MetaUserMapping> userMappings;
+
 
 
     public MetaData(){}

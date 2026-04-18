@@ -2,6 +2,8 @@ package com.EntitlementService.AccessRights.Service.Impl;
 
 import com.EntitlementService.AccessRights.Entity.MetaData;
 import com.EntitlementService.AccessRights.Entity.MetaProperties;
+import com.EntitlementService.AccessRights.Entity.MetaUserMapping;
+import com.EntitlementService.AccessRights.Pojo.MetaDataDTO;
 import com.EntitlementService.AccessRights.Repository.MetaUserMap;
 import com.EntitlementService.AccessRights.Repository.AccessRepository;
 import com.EntitlementService.AccessRights.Service.AccessService;
@@ -33,5 +35,15 @@ public class AccessServiceImpl implements AccessService {
         catch(Exception e){
             throw e;
         }
+    }
+
+    @Override
+    public List<MetaDataDTO> getAllmetaData(){
+        return accessRepository.getAllmetaData();
+    }
+
+    @Override
+    public List<MetaUserMapping> getAllMetaMapUser(int id){
+        return accessRepository.getAllWithMetadata(id);
     }
 }

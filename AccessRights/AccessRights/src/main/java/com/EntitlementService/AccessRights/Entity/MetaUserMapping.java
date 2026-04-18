@@ -1,6 +1,7 @@
 package com.EntitlementService.AccessRights.Entity;
 
 import jakarta.persistence.*;
+import org.springframework.data.jpa.repository.Meta;
 
 @Entity
 @Table(name="SDM_USER_META_RIGHTS",
@@ -12,18 +13,19 @@ public class MetaUserMapping {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int userId;
-    private int metadataId;
+    @ManyToOne
+    @JoinColumn(name = "metadataId", referencedColumnName = "id")
+    private MetaData metaData;
     private String readRights;
-    private String writeRights;
     private String deleteRights;
     private String uploadRights;
     private String downloadRights;
 
-    public MetaUserMapping(int userId, int metadataId, String read, String write, String delete, String upload, String download) {
+    public MetaUserMapping() {}
+    public MetaUserMapping(int userId, MetaData metadata, String read, String delete, String upload, String download) {
         this.userId = userId;
-        this.metadataId = metadataId;
         this.readRights = read;
-        this.writeRights = write;
+        this.metaData = metadata;
         this.deleteRights = delete;
         this.uploadRights = upload;
         this.downloadRights = download;
@@ -44,28 +46,12 @@ public class MetaUserMapping {
         this.userId = userId;
     }
 
-    public int getMetadataId() {
-        return metadataId;
-    }
-
-    public void setMetadataId(int metadataId) {
-        this.metadataId = metadataId;
-    }
-
     public String getReadRights() {
         return readRights;
     }
 
     public void setReadRights(String readRights) {
         this.readRights = readRights;
-    }
-
-    public String getWriteRights() {
-        return writeRights;
-    }
-
-    public void setWriteRights(String writeRights) {
-        this.writeRights = writeRights;
     }
 
     public String getDeleteRights() {

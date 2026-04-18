@@ -3,15 +3,17 @@ package com.EntitlementService.AccessRights.Controller;
 import com.EntitlementService.AccessRights.Entity.MetaData;
 import com.EntitlementService.AccessRights.Entity.MetaUserMapping;
 import com.EntitlementService.AccessRights.Pojo.CommonResponse;
+import com.EntitlementService.AccessRights.Pojo.MetaDataDTO;
 import com.EntitlementService.AccessRights.Repository.MetaUserMap;
 import com.EntitlementService.AccessRights.Service.DynamicCreation;
 import com.EntitlementService.AccessRights.Service.Impl.AccessServiceImpl;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/AccessService")
@@ -32,7 +34,7 @@ public class AccessController {
         CommonResponse createPojo = new CommonResponse();
         try {
             accessService.createMetadata(metadata);
-            MetaUserMapping mp = new MetaUserMapping(1, metadata.getId(), "1","1","1","1","1");
+            MetaUserMapping mp = new MetaUserMapping(1, metadata, "1","1","1","1");
             metaUserMap.save(mp);
             createPojo.setStatus("1");
             createPojo.setMessage("Metadata Created Successfully");
@@ -75,6 +77,35 @@ public class AccessController {
         }
 
         return new ResponseEntity<>(accessRights, HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllMetaData")
+    public ResponseEntity<?> getAllMetaData() {
+        CommonResponse response = new CommonResponse();
+        List<MetaDataDTO> metaList = new ArrayList<>();
+        try{
+            metaList = accessService.getAllmetaData();
+            return new ResponseEntity<>(metaList, HttpStatus.OK);
+        }catch(Exception e){
+            e.printStackTrace();
+            response.setStatus("0");
+            response.setMessage("Error In Getting MetaData");
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/getMetaMapUser/{id}")
+    public ResponseEntity<?> getMetaMapUser(@PathVariable int id) {
+        CommonResponse response = new CommonResponse();
+        try{
+            List<MetaUserMapping> metaDataList = accessService.getAllMetaMapUser(id);
+            return  new ResponseEntity<>(metaDataList, HttpStatus.OK);
+        }catch(Exception e){
+            e.printStackTrace();
+            response.setStatus("0");
+            response.setMessage("Error In Getting Info");
+        }
+        return  new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
