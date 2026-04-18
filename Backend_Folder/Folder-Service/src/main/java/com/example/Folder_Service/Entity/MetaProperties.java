@@ -1,4 +1,63 @@
 package com.example.Folder_Service.Entity;
 
+import jakarta.persistence.*;
+
 public class MetaProperties {
+
+    private int id;
+    private int metadataId;
+    private String propName;
+    private String propValue;
+    private String type;
+    private int size;
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getMetadataId() {
+        return metadataId;
+    }
+
+    public void setMetadataId(int metadataId) {
+        this.metadataId = metadataId;
+    }
+
+    public String getPropName() {
+        return propName;
+    }
+
+    public void setPropName(String propName) {
+        this.propName = propName;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public String getPropValue() {
+        return propValue;
+    }
+
+    public void setPropValue(String propValue) {
+        this.propValue = propValue;
+    }
 }
+
