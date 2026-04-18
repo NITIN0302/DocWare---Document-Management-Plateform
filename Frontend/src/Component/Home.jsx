@@ -6,6 +6,7 @@ import {
   faCompass,
   faSearch,
   faRecycle,
+  faUserShield
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import useCounterContext from "../States/userContext";
@@ -74,6 +75,23 @@ const Home = () => {
           </span>
           <span className="text-xs text-gray-500 w-full flex flex-wrap justify-center ">
             Search Particular Folder and Document
+          </span>
+        </div>
+        <div
+          onClick={() => handleNavigation("/access", 4)}
+          className="rounded-md grid grid-cols-1 bg-white border-2 border-amber-50 shadow-md hover:scale-105 transition duration-300"
+        >
+          <div className="w-fit mt-2 mx-auto px-2 rounded-full shadow-lg items-center flex flex-wrap justify-center">
+            <FontAwesomeIcon
+              className="fa-2x shadow-xl text-white p-4 rounded-full border border-indigo-500 bg-indigo-500"
+              icon={faUserShield}
+            />
+          </div>
+          <span className="text-gray-600 mt-1 text-sm font-bold flex flex-wrap justify-center">
+            AccessRights
+          </span>
+          <span className="text-xs text-gray-500 w-full flex flex-wrap justify-center ">
+              Folder and Document Access
           </span>
         </div>
         <div

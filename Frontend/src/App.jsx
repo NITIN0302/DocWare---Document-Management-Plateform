@@ -8,6 +8,7 @@ import Browse from "./Component/Browse";
 import Search from "./Component/Search";
 import Recycle from "./Component/Recycle";
 import GetDocument from "./DocumentViewer/GetDocument";
+import Access from "./Component/Access";
 import { UserContextProvider } from "./States/userContext";
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/browse" element={<Browse />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/access" element={<Access />} />
             <Route path="/recycle" element={<Recycle />} />
             <Route path="/viewDocument" element={<GetDocument />} />
           </Routes>
