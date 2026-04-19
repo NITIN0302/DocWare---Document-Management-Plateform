@@ -30,6 +30,7 @@ public class AccessServiceImpl implements AccessService {
     public void createMetadata(MetaData metaData) {
         try{
             MetaData md = accessRepository.save(metaData);
+            dynamicCreation.saveMetaProp(metaData.getMetaDataProp(),metaData.getId());
             dynamicCreation.createMetadataTable(metaData);
         }
         catch(Exception e){

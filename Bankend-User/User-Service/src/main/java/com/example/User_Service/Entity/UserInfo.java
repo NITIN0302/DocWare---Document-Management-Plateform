@@ -1,7 +1,7 @@
 package com.example.User_Service.Entity;
 
-
 public class UserInfo {
+
     public String username;
     public String password;
     public String role;

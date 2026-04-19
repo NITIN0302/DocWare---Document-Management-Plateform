@@ -211,11 +211,6 @@ const Access = () => {
                         onClick={() => { enableModify(`rights-${ele.userId}`) }}
                         className="cursor-pointer text-lg text-indigo-500 hover:scale-110 transition-transform"
                       />
-                      {/* <FontAwesomeIcon
-                        icon={faSave}
-                        onClick={() => { updateRights() }}
-                        className=" cursor-pointer text-lg text-indigo-500 hover:scale-110 transition-transform"
-                      /> */}
                     </div>
                   </div>
                 ))

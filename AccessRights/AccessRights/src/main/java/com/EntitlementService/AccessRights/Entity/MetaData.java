@@ -57,8 +57,8 @@ public class MetaData {
         return metaDataProp;
     }
 
-    public void setMetaDateProp(List<MetaProperties> metaData) {
-        this.metaDataProp = metaData;
+    public void setMetaDataProp(List<MetaProperties> metaDataProp) {
+        this.metaDataProp = metaDataProp;
     }
 
     public String getDocid() {

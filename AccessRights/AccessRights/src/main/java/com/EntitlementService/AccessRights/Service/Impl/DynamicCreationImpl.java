@@ -11,6 +11,7 @@ import jakarta.servlet.Registration;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class DynamicCreationImpl implements DynamicCreation {
@@ -67,6 +68,27 @@ public class DynamicCreationImpl implements DynamicCreation {
             Query query = InsertUtils.createInsertQuery(entityManager,tableName,paramMap);
             query.executeUpdate();
             result = true;
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }finally{
+            return result;
+        }
+    }
+
+    @Override
+    @Transactional
+    public boolean saveMetaProp(List<MetaProperties> metaProps,int id){
+        boolean result = false;
+        try{
+            for(MetaProperties prop:metaProps){
+                StringBuilder query = new StringBuilder();
+                query.append("INSERT INTO SDM_METADATA_PROPERTIES(METADATA_ID,PROP_NAME,SIZE,TYPE) VALUES (");
+                query.append(id + ", ");
+                query.append("'" + prop.getPropName() + "', ");
+                query.append(prop.getSize() + ", ");
+                query.append("'" + prop.getType() + "') ");
+                entityManager.createNativeQuery(query.toString()).executeUpdate();
+            }
         }catch(Exception ex){
             ex.printStackTrace();
         }finally{
