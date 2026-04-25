@@ -33,6 +33,8 @@ const Browse = () => {
   const [metalist, setMetaList] = useState();
   const [metaProp, setMetaProp] = useState([]);
   const [propStatus, setPropStatus] = useState("hidden");
+  const [metaInfo, setMetaInfo] = useState();
+  const [metaName, setMetaName] = useState();
 
 
   const fileToBase64 = (file) => {
@@ -60,6 +62,12 @@ const Browse = () => {
       }
       const result = await response.json();
       setMetaProp(result);
+      setMetaInfo(result.map((ele) => {
+        return {
+          propName: ele.propName,
+          propValue: null
+        };
+      }));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -68,6 +76,7 @@ const Browse = () => {
   }
 
   const selectionChange = (selected) => {
+    setMetaName(selected.name);
     setSelectedOptions(selected);
     setPropStatus("block");
     if (selected) {
@@ -157,9 +166,12 @@ const Browse = () => {
           body: JSON.stringify({
             name: folderName,
             parentId: parentId,
+            metaData: {
+              "name": metaName,
+              "metaDataProp": metaInfo
+            },
             createdBy: localStorage.getItem("username"),
             freeze: 0,
-            roles: selectedOptions.map((role) => role.value),
           }),
         }
       );
@@ -186,10 +198,13 @@ const Browse = () => {
           body: JSON.stringify({
             name: docName,
             parentId: parentId,
+            metaData: {
+              "name": metaName,
+              "metaDataProp": metaInfo
+            },
             createdBy: localStorage.getItem("username"),
             ext: extension,
             fileString: fileString,
-            roles: selectedOptions.map((role) => role.value),
           }),
         }
       );
@@ -290,6 +305,17 @@ const Browse = () => {
                       type={opt.type}
                       maxLength={opt.size}
                       placeholder={`Enter ${opt.propName}`}
+                      onBlur={(e) => {
+                        const value = e.target.value;
+
+                        setMetaInfo((prev) =>
+                          prev.map((item) =>
+                            item.propName === opt.propName
+                              ? { ...item, propValue: value }
+                              : item
+                          )
+                        );
+                      }}
                     />
                   </div>
                 ))
@@ -366,6 +392,17 @@ const Browse = () => {
                       type={opt.type}
                       maxLength={opt.size}
                       placeholder={`Enter ${opt.propName}`}
+                      onBlur={(e) => {
+                        const value = e.target.value;
+
+                        setMetaInfo((prev) =>
+                          prev.map((item) =>
+                            item.propName === opt.propName
+                              ? { ...item, propValue: value }
+                              : item
+                          )
+                        );
+                      }}
                     />
                   </div>
                 ))

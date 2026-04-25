@@ -65,21 +65,21 @@ public class SecurityConfig {
         return new JdbcUserDetailsManager(dataSource);
     }
 
-    @Bean
-    public CommandLineRunner initData(UserDetailsService userDetailsService)
-    {
-        return args -> {
-            JdbcUserDetailsManager manager = (JdbcUserDetailsManager) userDetailsService;
-
-            UserDetails admin = User.withUsername("admin")
-                    .password(passwordEncoder().encode("system123#"))
-                    .roles("ADMIN")
-                    .build();
-
-            JdbcUserDetailsManager userdetailsManager = new JdbcUserDetailsManager(dataSource);
-            userdetailsManager.createUser(admin);
-        };
-    }
+//    @Bean
+//    public CommandLineRunner initData(UserDetailsService userDetailsService)
+//    {
+//        return args -> {
+//            JdbcUserDetailsManager manager = (JdbcUserDetailsManager) userDetailsService;
+//
+//            UserDetails admin = User.withUsername("admin")
+//                    .password(passwordEncoder().encode("system123#"))
+//                    .roles("ADMIN")
+//                    .build();
+//
+//            JdbcUserDetailsManager userdetailsManager = new JdbcUserDetailsManager(dataSource);
+//            userdetailsManager.createUser(admin);
+//        };
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
