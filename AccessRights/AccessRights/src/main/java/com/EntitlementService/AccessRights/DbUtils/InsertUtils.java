@@ -29,6 +29,7 @@ public class InsertUtils {
         for (int i = 0; i < values.size(); i++) {
             nativeQuery.setParameter(i + 1, values.get(i));
         }
+        System.out.println("nativeQuery:"+nativeQuery);
         return nativeQuery;
     }
 }
