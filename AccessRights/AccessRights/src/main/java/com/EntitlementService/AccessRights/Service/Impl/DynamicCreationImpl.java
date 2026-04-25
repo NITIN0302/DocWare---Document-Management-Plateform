@@ -10,6 +10,8 @@ import jakarta.persistence.Query;
 import jakarta.servlet.Registration;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -93,6 +95,24 @@ public class DynamicCreationImpl implements DynamicCreation {
             ex.printStackTrace();
         }finally{
             return result;
+        }
+    }
+
+    @Override
+    @Transactional
+    public List<MetaProperties> getAllProps(int id) {
+        List<MetaProperties> metaDataList = new ArrayList<>();
+        try{
+            StringBuilder query = new StringBuilder();
+            query.append("SELECT * FROM SDM_METADATA_PROPERTIES WHERE METADATA_ID = ?");
+            metaDataList = entityManager
+                    .createNativeQuery(query.toString(), MetaProperties.class)
+                    .setParameter(1, id)
+                    .getResultList();
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }finally{
+            return metaDataList;
         }
     }
 

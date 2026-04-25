@@ -1,6 +1,7 @@
 package com.EntitlementService.AccessRights.Controller;
 
 import com.EntitlementService.AccessRights.Entity.MetaData;
+import com.EntitlementService.AccessRights.Entity.MetaProperties;
 import com.EntitlementService.AccessRights.Entity.MetaUserMapping;
 import com.EntitlementService.AccessRights.Pojo.CommonResponse;
 import com.EntitlementService.AccessRights.Pojo.MetaDataDTO;
@@ -107,6 +108,23 @@ public class AccessController {
         }
         return  new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
+    @GetMapping("/getAllProp/{id}")
+    public ResponseEntity<?> getMetaProperty(@PathVariable int id) {
+        CommonResponse response = new CommonResponse();
+        try{
+            List<MetaProperties> metaDataList = creation.getAllProps(id);
+            return  new ResponseEntity<>(metaDataList, HttpStatus.OK);
+        }catch(Exception e){
+            e.printStackTrace();
+            response.setStatus("0");
+            response.setMessage("Error In Getting Info");
+        }
+        return  new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
 
 
 }

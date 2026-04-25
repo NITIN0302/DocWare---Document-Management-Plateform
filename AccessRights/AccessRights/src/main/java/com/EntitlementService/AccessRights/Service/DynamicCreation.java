@@ -12,4 +12,6 @@ public interface DynamicCreation {
     public boolean createMetadataTable(MetaData metaData);
     public boolean saveMetadataDoc(MetaData metaData);
     public boolean saveMetaProp(List<MetaProperties> metaProps,int id);
+    public List<MetaProperties> getAllProps(int id);
+
 }
