@@ -15,8 +15,8 @@ import Document from "../Browse/Document";
 
 const Browse = () => {
   const [path, setPath] = useState([{ id: 0, name: "root" }]);
-  const [itemPerPage,setItemPerPage] = useState(5);
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [itemPerPage, setItemPerPage] = useState(5);
+  const [selectedOptions, setSelectedOptions] = useState();
   const [folderData, setFolderData] = useState([]);
   const [docData, setDocData] = useState([]);
   const [parentId, setParentId] = useState(0);
@@ -30,21 +30,72 @@ const Browse = () => {
   const [fileString, setFileString] = useState();
   const [data, setData] = useState("F");
   const [docFol, setDocfol] = useState("F");
-  const options = [
-    { value: "ROLE_ADMIN", label: "ROLE_ADMIN" },
-    { value: "ROLE_USER", label: "ROLE_USER" },
-    { value: "ROLE_MANAGEMENT", label: "ROLE_MANAGEMENT" },
-  ];
+  const [metalist, setMetaList] = useState();
+  const [metaProp, setMetaProp] = useState([]);
+  const [propStatus, setPropStatus] = useState("hidden");
+
 
   const fileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-
       reader.readAsDataURL(file);
-
       reader.onload = () => resolve(reader.result);
       reader.onerror = (error) => reject(error);
     });
+  };
+
+  const getAllProperty = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8085/AccessService/getAllProp/${id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const result = await response.json();
+      setMetaProp(result);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const selectionChange = (selected) => {
+    setSelectedOptions(selected);
+    setPropStatus("block");
+    if (selected) {
+      getAllProperty(selected.id);
+    }
+  };
+
+  const getAllMetaData = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8085/AccessService/getAllMetaData`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const result = await response.json();
+      setMetaList(result);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getDocument = async () => {
@@ -174,6 +225,8 @@ const Browse = () => {
     setModalOpen(false);
     setModal1Open(false);
     setSelectedOptions([]);
+    setPropStatus("hidden");
+    setMetaProp([]);
   };
 
   const handleFileChange = async (e) => {
@@ -206,18 +259,43 @@ const Browse = () => {
       >
         <div className="space-y-4 px-2 py-1">
           {/* Folder Access */}
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1">
+          <div className="flex gap-2">
+            <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
               Folder Access :
             </label>
             <Select
-              className="w-[90%] border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white text-black text-sm"
-              isMulti
-              options={options}
+              className="w-[65%] border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white text-black text-sm"
+              options={metalist}
+              getOptionLabel={(e) => e.name}
+              getOptionValue={(e) => e.id}
               value={selectedOptions}
-              onChange={setSelectedOptions}
-              placeholder="Select Role"
+              onChange={selectionChange}
+              placeholder="Select MetaData"
             />
+          </div>
+          <div className={`w-[90%] ${propStatus} bg-white border border-blue-500 rounded-md py-2 px-2`}>
+            <label className="text-sm font-medium text-gray-700 block mb-1">
+              MetaData Property :
+            </label>
+
+            <div className="grid grid-cols-2">
+              {
+                metaProp.map((opt) => (
+                  < div >
+                    <label className="text-xs font-medium text-gray-700 block mb-1">
+                      {opt.propName}
+                    </label>
+                    <input
+                      className="w-[90%] px-1 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-black bg-white"
+                      type={opt.type}
+                      maxLength={opt.size}
+                      placeholder={`Enter ${opt.propName}`}
+                    />
+                  </div>
+                ))
+              }
+            </div>
+
           </div>
 
           {/* Folder Name */}
@@ -244,7 +322,7 @@ const Browse = () => {
             </button>
           </div>
         </div>
-      </Modal>
+      </Modal >
 
       <Modal
         isOpen={modal1Open}
@@ -255,18 +333,44 @@ const Browse = () => {
       >
         <div className="space-y-4 px-2 py-1">
           {/* Document Access */}
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1">
+          <div className="flex gap-2">
+            <label className="flex items-center text-sm font-medium text-gray-700 block mb-1">
               Document Access :
             </label>
             <Select
-              className="w-[90%] border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white text-black text-sm"
-              isMulti
-              options={options}
+              className="w-[60%] border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white text-black text-sm"
+              options={metalist}
+              getOptionLabel={(e) => e.name}
+              getOptionValue={(e) => e.id}
               value={selectedOptions}
-              onChange={setSelectedOptions}
-              placeholder="Select Role"
+              onChange={selectionChange}
+              placeholder="Select MetaData"
             />
+          </div>
+
+
+          <div className={`w-[90%] ${propStatus} bg-white border border-blue-500 rounded-md py-2 px-2`}>
+            <label className="text-sm font-medium text-gray-700 block mb-1">
+              MetaData Property :
+            </label>
+
+            <div className="grid grid-cols-2">
+              {
+                metaProp.map((opt) => (
+                  < div >
+                    <label className="text-xs font-medium text-gray-700 block mb-1">
+                      {opt.propName}
+                    </label>
+                    <input
+                      className="w-[90%] px-1 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-black bg-white"
+                      type={opt.type}
+                      maxLength={opt.size}
+                      placeholder={`Enter ${opt.propName}`}
+                    />
+                  </div>
+                ))
+              }
+            </div>
           </div>
 
           {/* File Upload */}
@@ -309,11 +413,10 @@ const Browse = () => {
                 className="flex items-center cursor-pointer transition-transform duration-300 hover:scale-105"
               >
                 <p
-                  className={`${
-                    docFol === "F"
-                      ? "bg-indigo-500 text-white shadow-md"
-                      : "bg-gray-100 text-gray-700 hover:bg-indigo-100"
-                  } text-sm px-5 py-1 rounded-full font-medium transition-colors duration-300`}
+                  className={`${docFol === "F"
+                    ? "bg-indigo-500 text-white shadow-md"
+                    : "bg-gray-100 text-gray-700 hover:bg-indigo-100"
+                    } text-sm px-5 py-1 rounded-full font-medium transition-colors duration-300`}
                 >
                   📁 Folder
                 </p>
@@ -323,11 +426,10 @@ const Browse = () => {
                 className="flex items-center cursor-pointer transition-transform duration-300 hover:scale-105"
               >
                 <p
-                  className={`${
-                    docFol === "D"
-                      ? "bg-indigo-500 text-white shadow-md"
-                      : "bg-gray-100 text-gray-700 hover:bg-indigo-100"
-                  } text-sm px-5 py-1 rounded-full font-medium transition-colors duration-300`}
+                  className={`${docFol === "D"
+                    ? "bg-indigo-500 text-white shadow-md"
+                    : "bg-gray-100 text-gray-700 hover:bg-indigo-100"
+                    } text-sm px-5 py-1 rounded-full font-medium transition-colors duration-300`}
                 >
                   📄 Document
                 </p>
@@ -355,7 +457,7 @@ const Browse = () => {
               {parentId !== 0 && (
                 <div className="flex items-center space-x-3">
                   <button
-                    onClick={() => setModalOpen(true)}
+                    onClick={() => { getAllMetaData(); setModalOpen(true) }}
                     className="rounded-full  transition"
                     title="Create Folder"
                   >
@@ -365,7 +467,7 @@ const Browse = () => {
                     />
                   </button>
                   <button
-                    onClick={() => setModal1Open(true)}
+                    onClick={() => { getAllMetaData(); setModal1Open(true) }}
                     className="rounded-full transition"
                     title="Upload Document"
                   >
@@ -413,7 +515,7 @@ const Browse = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
