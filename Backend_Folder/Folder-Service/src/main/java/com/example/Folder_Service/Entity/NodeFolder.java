@@ -27,6 +27,25 @@ public class NodeFolder {
     public int freeze;
     @Transient
     private List<String> roles;
+    @Transient
+    private MetaData metaData;
+
+
+    public MetaData getMetaData() {
+        return metaData;
+    }
+
+    public void setMetaData(MetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    public int getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(int uuid) {
+        this.uuid = uuid;
+    }
 
     public List<String> getRoles() {
         return roles;
@@ -40,13 +59,6 @@ public class NodeFolder {
         createdDate = new Date();
     }
 
-    public int getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(int uuid) {
-        this.uuid = uuid;
-    }
 
     public String getName() {
         return name;

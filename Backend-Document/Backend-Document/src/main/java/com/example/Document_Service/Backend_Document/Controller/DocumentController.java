@@ -32,9 +32,6 @@ public class DocumentController {
     @Autowired
     public JwtUtils jwtUtils;
 
-    @Autowired
-    public SaveMetaData saveMetaData;
-
 
     public DocumentController(DocumentServiceImpl documentService) {
         this.documentService = documentService;
@@ -43,15 +40,10 @@ public class DocumentController {
     @PostMapping("/uploadDocument")
     public ResponseEntity<?> uploadDocument(HttpServletRequest request, @RequestBody NodeDocument nodeDocument) throws Exception {
         UploadResponse response = new UploadResponse();
-        CommonResponse commonResponse = new CommonResponse();
         String token = request.getHeader("Authorization");
         boolean isValid = jwtUtils.validateJwtToken(token);
         if (isValid) {
-            System.out.println(commonResponse.getMessage());
             response = documentService.uploadDocument(nodeDocument);
-            MetaData metaData = nodeDocument.getMetaData();
-            metaData.setDocid(response.getUuid().toString());
-            commonResponse = saveMetaData.saveMetadataInfo(nodeDocument.getMetaData()).getBody();
             return ResponseEntity.ok(response);
         } else {
             response.setStatus(0);

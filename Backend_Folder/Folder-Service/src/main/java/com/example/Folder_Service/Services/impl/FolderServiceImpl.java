@@ -5,16 +5,15 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.Folder_Service.Entity.FolderAccess;
+import com.example.Folder_Service.Entity.MetaData;
+import com.example.Folder_Service.Pojo.CommonResponse;
 import com.example.Folder_Service.Repository.RoleRepository;
-import com.example.Folder_Service.Services.GetRole;
-import com.example.Folder_Service.Services.GetUser;
-import com.example.Folder_Service.Services.RoleService;
+import com.example.Folder_Service.Services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.Folder_Service.Entity.NodeFolder;
 import com.example.Folder_Service.Repository.FolderRepository;
-import com.example.Folder_Service.Services.FolderService;
 
 @Service
 public class FolderServiceImpl implements FolderService {
@@ -27,6 +26,8 @@ public class FolderServiceImpl implements FolderService {
     private RoleService roleService;
     @Autowired
     private GetRole userRole;
+    @Autowired
+    public SaveMetaData saveMetaData;
 
 
     @Override
@@ -52,14 +53,18 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public NodeFolder createFolder(NodeFolder nodefolder) {
-        List<String> roles = nodefolder.getRoles();
+//        List<String> roles = nodefolder.getRoles();
+        CommonResponse commonResponse = new CommonResponse();
         NodeFolder nodeRes = folderRepository.save(nodefolder);
-        for (String role : roles) {
-            FolderAccess fa = new FolderAccess();
-            fa.setUuid(nodeRes.getUuid());
-            fa.setRole(role);
-            roleService.addAccessRights(fa);
-        }
+//        for (String role : roles) {
+//            FolderAccess fa = new FolderAccess();
+//            fa.setUuid(nodeRes.getUuid());
+//            fa.setRole(role);
+//            roleService.addAccessRights(fa);
+//        }
+        MetaData ms = nodefolder.getMetaData();
+        ms.setDocid(String.valueOf((nodeRes.getUuid())));
+        commonResponse = saveMetaData.saveMetadataInfo(nodefolder.getMetaData()).getBody();
         return nodeRes;
     }
 

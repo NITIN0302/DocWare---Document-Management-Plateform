@@ -1,16 +1,10 @@
 package com.example.Document_Service.Backend_Document.Services.Impl;
 
-import com.example.Document_Service.Backend_Document.Entity.Config;
-import com.example.Document_Service.Backend_Document.Entity.DocumentAccess;
-import com.example.Document_Service.Backend_Document.Entity.NodeDocument;
-import com.example.Document_Service.Backend_Document.Entity.RecycledDocument;
+import com.example.Document_Service.Backend_Document.Entity.*;
 import com.example.Document_Service.Backend_Document.FileModule.CreateFileName;
 import com.example.Document_Service.Backend_Document.FileModule.FileStreamHandler;
 import com.example.Document_Service.Backend_Document.FileModule.S3FileHandler;
-import com.example.Document_Service.Backend_Document.Pojo.DeleteDocument;
-import com.example.Document_Service.Backend_Document.Pojo.FreezeStatus;
-import com.example.Document_Service.Backend_Document.Pojo.GetDocument;
-import com.example.Document_Service.Backend_Document.Pojo.UploadResponse;
+import com.example.Document_Service.Backend_Document.Pojo.*;
 import com.example.Document_Service.Backend_Document.Services.*;
 import com.example.Document_Service.Backend_Document.repository.DocumentRepository;
 import com.example.Document_Service.Backend_Document.repository.RecycleRepository;
@@ -43,12 +37,14 @@ public class DocumentServiceImpl implements DocumentService {
     private GetFreezeStatus getFreezeStatus;
     @Autowired
     private S3FileHandler s3FileHandler;
+    @Autowired
+    public SaveMetaData saveMetaData;
 
     @Override
     public UploadResponse uploadDocument(NodeDocument nodeDocument) {
         UploadResponse response = new UploadResponse();
         String fileString = nodeDocument.getFileString();
-        List<String> roles = nodeDocument.getRoles();
+        CommonResponse commonResponse = new CommonResponse();
         ResponseEntity<?> freezeStatus = getFreezeStatus.isFolderFreeze(nodeDocument.getParentId());
         FreezeStatus freezeResponse = (FreezeStatus) freezeStatus.getBody();
 
@@ -75,12 +71,15 @@ public class DocumentServiceImpl implements DocumentService {
         String Location = cf.getVolumn() + nodeDocument.getName() + "-" + encodedName + ".txt";
         FileStreamHandler.createAndWriteToFile(fileString, Location);
         NodeDocument nd = documentRepository.save(nodeDocument);
-        for (String role : roles) {
-            DocumentAccess da = new DocumentAccess();
-            da.setUuid(nd.getUuid());
-            da.setRole(role);
-            roleService.addAccessRights(da);
-        }
+//        for (String role : roles) {
+//            DocumentAccess da = new DocumentAccess();
+//            da.setUuid(nd.getUuid());
+//            da.setRole(role);
+//            roleService.addAccessRights(da);
+//        }
+        MetaData metaData = nodeDocument.getMetaData();
+        metaData.setDocid(nd.getUuid().toString());
+        commonResponse = saveMetaData.saveMetadataInfo(nodeDocument.getMetaData()).getBody();
         response.setStatus(1);
         response.setUuid(nd.getUuid());
         response.setMessage("Document Uploaded Succesfully");
