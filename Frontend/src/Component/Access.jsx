@@ -79,6 +79,7 @@ const Access = () => {
   };
 
   const getAllUserMapped = async (id) => {
+    console.log(id);
     try {
       const response = await fetch(
         `http://localhost:8085/AccessService/getMetaMapUser/${id}`,
@@ -301,13 +302,13 @@ const Access = () => {
                 {userList.length !== 0 ? (
                   userList.map((ele, index) => (
                     <div
-                      id={`rights-${ele.userId}`}
-                      key={ele.userId}
+                      id={`rights-${ele.userName}`}
+                      key={ele.userName}
                       className={`flex items-center text-sm transition-colors ${index % 2 === 0 ? "bg-gray-50" : "bg-white"
                         } hover:bg-blue-50 border-b border-gray-200`}
                     >
                       <div className="w-[20%] px-3 py-2 truncate border-r border-gray-100 font-medium text-gray-800">
-                        {ele.userId}
+                        {ele.userName}
                       </div>
 
                       <div className="w-[15%] px-3 py-2 border-r border-gray-100">

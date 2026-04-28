@@ -13,5 +13,6 @@ public interface DynamicCreation {
     public boolean saveMetadataDoc(MetaData metaData);
     public boolean saveMetaProp(List<MetaProperties> metaProps,int id);
     public List<MetaProperties> getAllProps(int id);
+    public boolean getAllMappedUser(int id,String username);
 
 }

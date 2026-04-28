@@ -1,18 +1,19 @@
-package com.EntitlementService.AccessRights.Pojo;
+package com.example.Folder_Service.Pojo;
 
-public class CommonResponse {
+public class SaveMetaDataResp {
     private int id;
     private String status;
     public String message;
     public String errorCode;
-    public CommonResponse() {
+    public SaveMetaDataResp() {
     }
-    public CommonResponse(int id,String status, String message,String errorCode) {
+    public SaveMetaDataResp(int id,String status, String message,String errorCode) {
         this.id = id;
         this.status = status;
         this.message = message;
         this.errorCode = errorCode;
     }
+
     public int getId() {
         return id;
     }
@@ -20,6 +21,7 @@ public class CommonResponse {
     public void setId(int id) {
         this.id = id;
     }
+
     public String getStatus() {
         return status;
     }
@@ -43,4 +45,5 @@ public class CommonResponse {
     public void setErrorCode(String errorCode) {
         this.errorCode = errorCode;
     }
+
 }

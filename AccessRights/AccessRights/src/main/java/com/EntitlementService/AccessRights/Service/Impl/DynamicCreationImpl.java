@@ -3,6 +3,7 @@ package com.EntitlementService.AccessRights.Service.Impl;
 import com.EntitlementService.AccessRights.DbUtils.InsertUtils;
 import com.EntitlementService.AccessRights.Entity.MetaData;
 import com.EntitlementService.AccessRights.Entity.MetaProperties;
+import com.EntitlementService.AccessRights.Entity.MetaUserMapping;
 import com.EntitlementService.AccessRights.Service.DynamicCreation;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -113,6 +114,25 @@ public class DynamicCreationImpl implements DynamicCreation {
             ex.printStackTrace();
         }finally{
             return metaDataList;
+        }
+    }
+
+    @Override
+    public boolean getAllMappedUser(int id,String username) {
+        boolean result = false;
+        try{
+            StringBuilder query = new StringBuilder();
+            query.append("SELECT USERNAME from SDM_USER_META_RIGHTS WHERE METADATA_ID = ? AND USERNAME = ?");
+            result = entityManager
+                    .createNativeQuery(query.toString(), MetaUserMapping.class)
+                    .setParameter(1, id)
+                    .setParameter(2, username)
+                    .getResultList().size() > 0;
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }finally{
+            return result;
         }
     }
 

@@ -16,4 +16,6 @@ public interface AccessRepository extends JpaRepository<MetaData,Integer> {
 
     @Query("SELECT m FROM MetaUserMapping m JOIN FETCH m.metaData where m.id=:id")
     List<MetaUserMapping> getAllWithMetadata(@Param("id")int id);
+
+    public MetaData findByName(String name);
 }

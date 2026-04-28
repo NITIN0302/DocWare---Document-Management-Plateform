@@ -6,7 +6,7 @@ import com.example.Folder_Service.Pojo.FolderInfo;
 import com.example.Folder_Service.Pojo.Response;
 import com.example.Folder_Service.Pojo.ResultResponse;
 import com.example.Folder_Service.Services.FolderService;
-import com.example.Folder_Service.Services.GetUser;
+//import com.example.Folder_Service.Services.GetUser;
 import com.example.Folder_Service.Services.SaveMetaData;
 import com.example.Folder_Service.Services.ValidateUser;
 import com.example.Folder_Service.Services.impl.FolderServiceImpl;
@@ -27,8 +27,6 @@ public class FolderController {
     @Autowired
     public final FolderServiceImpl folderService;
     public final ValidateUser validateUser;
-    @Autowired
-    private GetUser getUser;
     private JwtUtils jwtUtils;
 
 
@@ -42,7 +40,7 @@ public class FolderController {
     public ResponseEntity<?> getFolderByName(HttpServletRequest request, @PathVariable String name) {
         ResultResponse resultResponse = new ResultResponse();
         String token = request.getHeader("Authorization");
-        String username = getUser.getUserByJwtToken(token);
+        String username = jwtUtils.getUserNameFromJwtToken(token);
         boolean validToken = jwtUtils.validateJwtToken(token);
         if (validToken) {
             List<NodeFolder> folders = folderService.getFolderByName(username, name);
@@ -59,7 +57,7 @@ public class FolderController {
         CreateFolder response;
         ResultResponse resultResponse = new ResultResponse();
         String token = request.getHeader("Authorization");
-        String username = getUser.getUserByJwtToken(token);
+        String username = jwtUtils.getUserNameFromJwtToken(token);
         boolean validToken = jwtUtils.validateJwtToken(token);
         if (validToken) {
             List<NodeFolder> folders = folderService.getFolderByName(username, nodeFolder.getName());
@@ -82,7 +80,7 @@ public class FolderController {
     public ResponseEntity<?> getFolder(HttpServletRequest request, @PathVariable int parentId) {
         ResultResponse resultResponse = new ResultResponse();
         String token = request.getHeader("Authorization");
-        String username = getUser.getUserByJwtToken(token);
+        String username = jwtUtils.getUserNameFromJwtToken(token);
         boolean validToken = jwtUtils.validateJwtToken(token);
         if (validToken) {
             List<NodeFolder> folders = folderService.getFolder(username, parentId);
@@ -98,7 +96,7 @@ public class FolderController {
     public ResponseEntity<?> getFolderById(HttpServletRequest request, @PathVariable int id) {
         ResultResponse resultResponse = new ResultResponse();
         String token = request.getHeader("Authorization");
-        String username = getUser.getUserByJwtToken(token);
+        String username = jwtUtils.getUserNameFromJwtToken(token);
         boolean validToken = jwtUtils.validateJwtToken(token);
         Optional<NodeFolder> folder;
         if (validToken) {
@@ -118,7 +116,7 @@ public class FolderController {
         Response resultset = new Response();
         ResultResponse resultResponse = new ResultResponse();
         String token = request.getHeader("Authorization");
-        String username = getUser.getUserByJwtToken(token);
+        String username = jwtUtils.getUserNameFromJwtToken(token);
         boolean validToken = jwtUtils.validateJwtToken(token);
         if (validToken) {
             Optional<NodeFolder> folder = folderService.getFolderById(username, id);

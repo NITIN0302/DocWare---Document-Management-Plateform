@@ -1,6 +1,7 @@
 package com.EntitlementService.AccessRights.Entity;
 
 import jakarta.persistence.*;
+import jdk.jfr.Timestamp;
 
 import java.util.Date;
 import java.util.List;
@@ -13,6 +14,7 @@ public class MetaData {
     private int id;
     @Column(unique = true, nullable = false)
     private String name;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
     @Transient
     List<MetaProperties> metaDataProp;
@@ -49,8 +51,9 @@ public class MetaData {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
+    @PrePersist
+    public void setCreatedDate() {
+        this.createdDate = new Date();
     }
 
     public List<MetaProperties> getMetaDataProp() {

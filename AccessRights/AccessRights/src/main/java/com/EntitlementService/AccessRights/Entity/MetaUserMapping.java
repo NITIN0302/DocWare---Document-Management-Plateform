@@ -12,7 +12,7 @@ public class MetaUserMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int userId;
+    private String userName;
     @ManyToOne
     @JoinColumn(name = "metadataId", referencedColumnName = "id")
     private MetaData metaData;
@@ -22,8 +22,8 @@ public class MetaUserMapping {
     private String downloadRights;
 
     public MetaUserMapping() {}
-    public MetaUserMapping(int userId, MetaData metadata, String read, String delete, String upload, String download) {
-        this.userId = userId;
+    public MetaUserMapping(String userName, MetaData metadata, String read, String delete, String upload, String download) {
+        this.userName = userName;
         this.readRights = read;
         this.metaData = metadata;
         this.deleteRights = delete;
@@ -38,12 +38,12 @@ public class MetaUserMapping {
         this.id = id;
     }
 
-    public int getUserId() {
-        return userId;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getReadRights() {

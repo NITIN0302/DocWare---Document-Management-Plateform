@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.Folder_Service.Entity.FolderAccess;
+import com.example.Folder_Service.Entity.FolderMetaMap;
 import com.example.Folder_Service.Entity.MetaData;
-import com.example.Folder_Service.Pojo.CommonResponse;
+import com.example.Folder_Service.Pojo.SaveMetaDataResp;
+import com.example.Folder_Service.Repository.FolderMetaRepository;
 import com.example.Folder_Service.Repository.RoleRepository;
 import com.example.Folder_Service.Services.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,10 @@ public class FolderServiceImpl implements FolderService {
     private GetRole userRole;
     @Autowired
     public SaveMetaData saveMetaData;
+    @Autowired
+    public FolderMetaRepository folderMetaRepository;
+    @Autowired
+    public GetMappedUser getMappedUser;
 
 
     @Override
@@ -53,18 +59,17 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public NodeFolder createFolder(NodeFolder nodefolder) {
-//        List<String> roles = nodefolder.getRoles();
-        CommonResponse commonResponse = new CommonResponse();
+        SaveMetaDataResp response = new SaveMetaDataResp();
         NodeFolder nodeRes = folderRepository.save(nodefolder);
-//        for (String role : roles) {
-//            FolderAccess fa = new FolderAccess();
-//            fa.setUuid(nodeRes.getUuid());
-//            fa.setRole(role);
-//            roleService.addAccessRights(fa);
-//        }
         MetaData ms = nodefolder.getMetaData();
-        ms.setDocid(String.valueOf((nodeRes.getUuid())));
-        commonResponse = saveMetaData.saveMetadataInfo(nodefolder.getMetaData()).getBody();
+        ms.setDocid(String.valueOf(nodeRes.getUuid()));
+        FolderMetaMap fm = new FolderMetaMap();
+        response = saveMetaData.saveMetadataInfo(nodefolder.getMetaData()).getBody();
+        if(response != null) {
+            fm.setMetaDataId(response.getId());
+            fm.setFolderId(nodeRes.getUuid());
+            folderMetaRepository.save(fm);
+        }
         return nodeRes;
     }
 
@@ -72,17 +77,17 @@ public class FolderServiceImpl implements FolderService {
     public List<NodeFolder> getFolder(String username,int parentId) {
         List<NodeFolder> allFolderByParent =  folderRepository.findByParentId(parentId);
         List<NodeFolder> accessedFolder = new ArrayList<NodeFolder>();
-        List<String> userRoles =  userRole.getRole(username);
-        if(userRoles.contains("ROLE_ADMIN")){
+        if(parentId == 0){
             return allFolderByParent;
         }
         else{
+            List<NodeFolder> allFolder = new ArrayList<>();
             for(NodeFolder nf : allFolderByParent){
-                List<FolderAccess> accessRights = roleRepository.findByUuid(nf.getUuid());
-                for(FolderAccess fa : accessRights){
-                    if(userRoles.contains(fa.getRole())){
-                        accessedFolder.add(nf);
-                    }
+                FolderMetaMap metaId = folderMetaRepository.findByFolderId(nf.getUuid());
+                int metaDataId = metaId.getMetaDataId();
+                boolean isAccessed = getMappedUser.getMappedUser(metaDataId);
+                if(isAccessed){
+                    accessedFolder.add(nf);
                 }
             }
         }
