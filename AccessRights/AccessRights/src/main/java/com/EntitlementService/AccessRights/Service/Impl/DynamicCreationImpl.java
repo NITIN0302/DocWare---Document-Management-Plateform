@@ -118,16 +118,16 @@ public class DynamicCreationImpl implements DynamicCreation {
     }
 
     @Override
-    public boolean getAllMappedUser(int id,String username) {
-        boolean result = false;
+    public List<String> getAllMappedUser(String username) {
+        System.out.println("Inside the funtion");
+        List<String> result = new ArrayList<>();
         try{
             StringBuilder query = new StringBuilder();
-            query.append("SELECT USERNAME from SDM_USER_META_RIGHTS WHERE METADATA_ID = ? AND USERNAME = ?");
+            query.append("SELECT METADATA_ID from SDM_USER_META_RIGHTS WHERE USER_NAME = ?");
             result = entityManager
-                    .createNativeQuery(query.toString(), MetaUserMapping.class)
-                    .setParameter(1, id)
-                    .setParameter(2, username)
-                    .getResultList().size() > 0;
+                    .createNativeQuery(query.toString())
+                    .setParameter(1, username)
+                    .getResultList();
 
         }catch(Exception ex){
             ex.printStackTrace();

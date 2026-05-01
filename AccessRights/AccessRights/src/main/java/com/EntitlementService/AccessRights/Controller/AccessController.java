@@ -115,20 +115,18 @@ public class AccessController {
         return  new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/getMappedUser/{id}")
-    public ResponseEntity<?> getMappedUser(HttpServletRequest request, @PathVariable int id) {
+    @GetMapping("/getAllMetaDataMapped/{username}")
+    public ResponseEntity<?> getMappedUser(@PathVariable String username) {
         CommonResponse response = new CommonResponse();
-        String token = request.getHeader("Authorization");
-        String username = jwtUtils.getUserNameFromJwtToken(token.substring(7));
         try{
-            boolean isAccessible = creation.getAllMappedUser(id,username);
-            return new ResponseEntity<>(isAccessible, HttpStatus.OK);
+            List<String> MetaDataList = creation.getAllMappedUser(username);
+            return new ResponseEntity<>(MetaDataList, HttpStatus.OK);
         }catch(Exception e){
             e.printStackTrace();
             response.setStatus("0");
             response.setMessage("Error In Getting Info");
         }
-        return  new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 

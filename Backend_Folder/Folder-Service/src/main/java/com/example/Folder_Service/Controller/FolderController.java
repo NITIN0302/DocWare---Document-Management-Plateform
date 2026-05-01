@@ -80,8 +80,10 @@ public class FolderController {
     public ResponseEntity<?> getFolder(HttpServletRequest request, @PathVariable int parentId) {
         ResultResponse resultResponse = new ResultResponse();
         String token = request.getHeader("Authorization");
+        System.out.println("Before Validations");
         String username = jwtUtils.getUserNameFromJwtToken(token);
         boolean validToken = jwtUtils.validateJwtToken(token);
+        System.out.println("Before repository called");
         if (validToken) {
             List<NodeFolder> folders = folderService.getFolder(username, parentId);
             return ResponseEntity.ok(folders);

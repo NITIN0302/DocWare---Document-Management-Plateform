@@ -85,8 +85,8 @@ public class FolderServiceImpl implements FolderService {
             for(NodeFolder nf : allFolderByParent){
                 FolderMetaMap metaId = folderMetaRepository.findByFolderId(nf.getUuid());
                 int metaDataId = metaId.getMetaDataId();
-                boolean isAccessed = getMappedUser.getMappedUser(metaDataId);
-                if(isAccessed){
+                List<String> metaList = getMappedUser.getMappedUser(username);
+                if(metaList.contains(String.valueOf(metaDataId))){
                     accessedFolder.add(nf);
                 }
             }
