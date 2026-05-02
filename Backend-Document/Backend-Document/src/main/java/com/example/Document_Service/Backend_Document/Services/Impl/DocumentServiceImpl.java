@@ -6,8 +6,10 @@ import com.example.Document_Service.Backend_Document.FileModule.FileStreamHandle
 import com.example.Document_Service.Backend_Document.FileModule.S3FileHandler;
 import com.example.Document_Service.Backend_Document.Pojo.*;
 import com.example.Document_Service.Backend_Document.Services.*;
+import com.example.Document_Service.Backend_Document.repository.DocumentMetaMapRepository;
 import com.example.Document_Service.Backend_Document.repository.DocumentRepository;
 import com.example.Document_Service.Backend_Document.repository.RecycleRepository;
+import com.example.Document_Service.Backend_Document.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,15 +22,14 @@ import java.util.Optional;
 @Service
 public class DocumentServiceImpl implements DocumentService {
 
-
     @Autowired
     public DocumentRepository documentRepository;
-
+    @Autowired
+    public RoleServiceImpl roleService;
     @Autowired
     private ConfigService configService;
-
     @Autowired
-    private RoleService roleService;
+    private DocumentMetaMapRepository documentMetaService;
     @Autowired
     private GetRole userRole;
     @Autowired
@@ -39,6 +40,8 @@ public class DocumentServiceImpl implements DocumentService {
     private S3FileHandler s3FileHandler;
     @Autowired
     public SaveMetaData saveMetaData;
+    @Autowired
+    public GetMappedUser getMappedUser;
 
     @Override
     public UploadResponse uploadDocument(NodeDocument nodeDocument) {
@@ -71,15 +74,15 @@ public class DocumentServiceImpl implements DocumentService {
         String Location = cf.getVolumn() + nodeDocument.getName() + "-" + encodedName + ".txt";
         FileStreamHandler.createAndWriteToFile(fileString, Location);
         NodeDocument nd = documentRepository.save(nodeDocument);
-//        for (String role : roles) {
-//            DocumentAccess da = new DocumentAccess();
-//            da.setUuid(nd.getUuid());
-//            da.setRole(role);
-//            roleService.addAccessRights(da);
-//        }
         MetaData metaData = nodeDocument.getMetaData();
         metaData.setDocid(nd.getUuid().toString());
+        DocMetaMap dm = new  DocMetaMap();
         commonResponse = saveMetaData.saveMetadataInfo(nodeDocument.getMetaData()).getBody();
+        if(commonResponse != null) {
+            dm.setMetaDataId(commonResponse.getId());
+            dm.setDocId(nd.getUuid());
+            documentMetaService.save(dm);
+        }
         response.setStatus(1);
         response.setUuid(nd.getUuid());
         response.setMessage("Document Uploaded Succesfully");
@@ -126,21 +129,16 @@ public class DocumentServiceImpl implements DocumentService {
         List<NodeDocument> allDocument = documentRepository.getDocumentByParentId(parentId);
         List<NodeDocument> accessedDocument = new ArrayList<NodeDocument>();
         List<String> userRoles = userRole.getRole(username);
-        if (userRoles.contains("ROLE_ADMIN")) {
-            for (NodeDocument nd : allDocument) {
-                if (nd.getIsDeleted().equalsIgnoreCase("0")) {
-                    accessedDocument.add(nd);
-                }
-            }
+        if (username.equalsIgnoreCase("admin")) {
+            return allDocument;
         } else {
             for (NodeDocument nd : allDocument) {
-                List<DocumentAccess> accessRights = roleService.getAccessByuuid(nd.getUuid());
-                for (DocumentAccess fa : accessRights) {
-                    if (userRoles.contains(fa.getRole()) && nd.getIsDeleted().equalsIgnoreCase("0")) {
-                        accessedDocument.add(nd);
-                    }
+                DocMetaMap metaId = documentMetaService.findByDocId(nd.getUuid());
+                int metaDataId = metaId.getMetaDataId();
+                List<String> metaList = getMappedUser.getMappedUser(username);
+                if(metaList.contains(String.valueOf(metaDataId))){
+                    accessedDocument.add(nd);
                 }
-
             }
         }
         return accessedDocument;

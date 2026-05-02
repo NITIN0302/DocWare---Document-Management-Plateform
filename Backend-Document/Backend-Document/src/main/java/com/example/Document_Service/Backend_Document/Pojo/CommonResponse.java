@@ -1,15 +1,25 @@
 package com.example.Document_Service.Backend_Document.Pojo;
 
 public class CommonResponse {
+    private int id;
     private String status;
     public String message;
     public String errorCode;
     public CommonResponse() {
     }
-    public CommonResponse(String status, String message,String errorCode) {
+    public CommonResponse(int id,String status, String message,String errorCode) {
+        this.id = id;
         this.status = status;
         this.message = message;
         this.errorCode = errorCode;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getStatus() {
