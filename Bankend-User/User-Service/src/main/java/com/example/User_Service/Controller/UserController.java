@@ -5,7 +5,9 @@ import com.example.User_Service.Entity.UserInfo;
 import com.example.User_Service.Pojo.LoginRequest;
 import com.example.User_Service.Pojo.LoginResponse;
 import com.example.User_Service.Pojo.ResultResponse;
+import com.example.User_Service.Pojo.UserDetailDTO;
 import com.example.User_Service.Repository.UserRepository;
+import com.example.User_Service.Service.UserService;
 import com.example.User_Service.session.JwtBlacklistService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,20 +40,18 @@ import java.util.stream.Collectors;
 public class UserController {
     @Autowired
     private AuthenticationManager authenticationManager;
-
     @Autowired
     private JwtUtils jwtUtils;
-
     @Autowired
     private JwtBlacklistService jwtBlacklistService;
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
-    DataSource dataSource;
+    public DataSource dataSource;
     @Autowired
-    PasswordEncoder passwordEncoder;
+    public PasswordEncoder passwordEncoder;
+    @Autowired
+    public UserService userService;
 
     @PostMapping("/Login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) throws JsonProcessingException {
@@ -135,20 +135,18 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/getRole")
-    public List<String> getRole(HttpServletRequest request){
-        List<String> result = new ArrayList<String>();
-        List<Authorities> response = userRepository.findByUsername(request.getHeader("username"));
-        for(Authorities role : response){
-            result.add(role.getAuthority());
-        }
-        return result;
-    }
-
     @GetMapping("/getUserInfo")
     public String getUserByJwtToken(HttpServletRequest request){
         String token = request.getHeader("Authorization");
         return jwtUtils.getUserNameFromJwtToken(token.substring(7));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getUser")
+    public List<String> getAllUser(HttpServletRequest request){
+        String token = request.getHeader("Authorization");
+        List<String> users = userService.getAllUsers();
+        return users;
     }
 
 

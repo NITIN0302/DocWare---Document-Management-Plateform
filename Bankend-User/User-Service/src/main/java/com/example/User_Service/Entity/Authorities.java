@@ -17,9 +17,6 @@ public class Authorities {
         this.authority = authority;
     }
 
-
-
-
     public String getUsername() {
         return username;
     }

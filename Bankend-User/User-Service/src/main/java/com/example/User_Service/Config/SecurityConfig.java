@@ -51,7 +51,7 @@ public class SecurityConfig {
                         requests
                                 .requestMatchers("/UserService/Login").permitAll()
                                 .requestMatchers("/UserService/validateToken").permitAll()
-                                .requestMatchers("/UserService/getRole").permitAll()
+                                .requestMatchers("/UserService/getUser").permitAll()
                                 .requestMatchers("/UserService/getUserInfo").permitAll()
                                 .anyRequest().authenticated()
                 )
