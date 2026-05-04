@@ -27,8 +27,6 @@ public class FolderServiceImpl implements FolderService {
     @Autowired
     private RoleService roleService;
     @Autowired
-    private GetRole userRole;
-    @Autowired
     public SaveMetaData saveMetaData;
     @Autowired
     public FolderMetaRepository folderMetaRepository;
@@ -38,19 +36,18 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public List<NodeFolder> getFolderByName(String username,String name) {
-        List<String> userRoles =  userRole.getRole(username);
         List<NodeFolder> allFolderByName = folderRepository.findByNameContaining(name);
         List<NodeFolder> allAccessedFolder = new ArrayList<NodeFolder>();
-        if(userRoles.contains("ROLE_ADMIN")){
+        if(username.equalsIgnoreCase("admin")){
             return allFolderByName;
         }
         else{
+            List<String> metaList = getMappedUser.getMappedUser(username);
             for(NodeFolder nf : allFolderByName){
-                List<FolderAccess> accessRights = roleRepository.findByUuid(nf.getUuid());
-                for(FolderAccess fa : accessRights){
-                    if(userRoles.contains(fa.getRole())){
-                        allAccessedFolder.add(nf);
-                    }
+                FolderMetaMap metaId = folderMetaRepository.findByFolderId(nf.getUuid());
+                int metaDataId = metaId.getMetaDataId();
+                if(metaList.contains(String.valueOf(metaDataId))){
+                    allAccessedFolder.add(nf);
                 }
             }
         }
@@ -82,10 +79,10 @@ public class FolderServiceImpl implements FolderService {
         }
         else{
             List<NodeFolder> allFolder = new ArrayList<>();
+            List<String> metaList = getMappedUser.getMappedUser(username);
             for(NodeFolder nf : allFolderByParent){
                 FolderMetaMap metaId = folderMetaRepository.findByFolderId(nf.getUuid());
                 int metaDataId = metaId.getMetaDataId();
-                List<String> metaList = getMappedUser.getMappedUser(username);
                 if(metaList.contains(String.valueOf(metaDataId))){
                     accessedFolder.add(nf);
                 }
@@ -96,17 +93,17 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public Optional<NodeFolder> getFolderById(String username,int id) {
-        List<String> userRoles =  userRole.getRole(username);
+//        List<String> userRoles =  userRole.getRole(username);
         Optional<NodeFolder> nf = folderRepository.findById(id);
-        if(userRoles.contains("ROLE_ADMIN")){
+        if(username.equalsIgnoreCase("admin")){
             return nf;
         }
         else{
-            List<FolderAccess> accessRights = roleRepository.findByUuid(nf.get().getUuid());
-            for(FolderAccess fa : accessRights){
-                if(userRoles.contains(fa.getRole())){
-                    return nf;
-                }
+            List<String> metaList = getMappedUser.getMappedUser(username);
+            FolderMetaMap metaId = folderMetaRepository.findByFolderId(nf.get().getUuid());
+            int metaDataId = metaId.getMetaDataId();
+            if(metaList.contains(String.valueOf(metaDataId))){
+                return nf;
             }
         }
         return null;
