@@ -60,17 +60,6 @@ public class DocumentServiceImpl implements DocumentService {
         String encodedName = CreateFileName.createName(nodeDocument);
         nodeDocument.setNbs_uuid(encodedName);
         Config cf = configService.getConfigValue();
-//        String s3Key = nodeDocument.getName() + "-" + encodedName + ".txt";
-//        try {
-//            s3FileHandler.uploadToS3(fileString, s3Key);
-//        }
-//        catch(Exception ex){
-//            response.setStatus(0);
-//            response.setMessage("S3 Bucket Access Right Issue");
-//            return response;
-//        }
-
-//        Code to write file on local system
         String Location = cf.getVolumn() + nodeDocument.getName() + "-" + encodedName + ".txt";
         FileStreamHandler.createAndWriteToFile(fileString, Location);
         NodeDocument nd = documentRepository.save(nodeDocument);
@@ -86,41 +75,6 @@ public class DocumentServiceImpl implements DocumentService {
         response.setStatus(1);
         response.setUuid(nd.getUuid());
         response.setMessage("Document Uploaded Succesfully");
-        return response;
-    }
-
-    @Override
-    public GetDocument getDocumentContent(String username, Long uuid) {
-        GetDocument response = new GetDocument();
-        List<DocumentAccess> accessRights = roleService.getAccessByuuid(uuid);
-        List<String> userRoles = userRole.getRole(username);
-        boolean isAccessible = false;
-        for (DocumentAccess da : accessRights) {
-            if (userRoles.contains(da.getRole())) {
-                isAccessible = true;
-                break;
-            }
-        }
-
-        NodeDocument nd = documentRepository.findById(uuid).orElseThrow();
-        Config cf = configService.getConfigValue();
-        String filePath = cf.getVolumn() + nd.getName() + "-" + nd.getNbs_uuid() + ".txt";
-        String fileString = FileStreamHandler.readFile(filePath);
-        if (isAccessible) {
-            if (fileString == "") {
-                response.setMessage("File Not Found");
-            } else {
-                response.setMessage("Success");
-            }
-            response.setFileString(fileString);
-            response.setStatus(1);
-            response.setUuid(nd.getUuid());
-            response.setName(nd.getName());
-            response.setExt(nd.getExt());
-        } else {
-            response.setStatus(0);
-            response.setMessage("ACCESS DENIED");
-        }
         return response;
     }
 
@@ -144,41 +98,67 @@ public class DocumentServiceImpl implements DocumentService {
         return accessedDocument;
     }
 
+
+    @Override
+    public GetDocument getDocumentContent(String username, Long uuid) {
+        GetDocument response = new GetDocument();
+        DocMetaMap metaId = documentMetaService.findByDocId(uuid);
+        int metaDataId = metaId.getMetaDataId();
+        List<String> metaList = getMappedUser.getMappedUser(username);
+        if(metaList.contains(String.valueOf(metaDataId))){
+            NodeDocument nd = documentRepository.findById(uuid).orElseThrow();
+            Config cf = configService.getConfigValue();
+            String filePath = cf.getVolumn() + nd.getName() + "-" + nd.getNbs_uuid() + ".txt";
+            String fileString = FileStreamHandler.readFile(filePath);
+            if (fileString.isEmpty()) {
+                response.setMessage("File Not Found");
+            } else {
+                response.setMessage("Success");
+            }
+            response.setFileString(fileString);
+            response.setStatus(1);
+            response.setUuid(nd.getUuid());
+            response.setName(nd.getName());
+            response.setExt(nd.getExt());
+        }
+        else {
+            response.setStatus(0);
+            response.setMessage("ACCESS DENIED");
+        }
+        return response;
+    }
+
     @Override
     public List<NodeDocument> getDocumentByName(String username, String docname) {
         List<NodeDocument> allDocument = documentRepository.getDocumentByNameContaining(docname);
         List<NodeDocument> accessedDocument = new ArrayList<NodeDocument>();
-        List<String> userRoles = userRole.getRole(username);
-        if (userRoles.contains("ROLE_ADMIN")) {
-            for (NodeDocument nd : allDocument) {
-                if (nd.getIsDeleted().equalsIgnoreCase("0")) {
+        if(username.equalsIgnoreCase("admin")){
+            return allDocument;
+        }
+        else{
+            List<String> metaList = getMappedUser.getMappedUser(username);
+            for(NodeDocument nd : allDocument){
+                DocMetaMap metaId = documentMetaService.findByDocId(nd.getUuid());
+                int metaDataId = metaId.getMetaDataId();
+                if(metaList.contains(String.valueOf(metaDataId))){
                     accessedDocument.add(nd);
                 }
             }
-        } else {
-            for (NodeDocument nd : allDocument) {
-                List<DocumentAccess> accessRights = roleService.getAccessByuuid(nd.getUuid());
-                for (DocumentAccess fa : accessRights) {
-                    if (userRoles.contains(fa.getRole()) && nd.getIsDeleted().equalsIgnoreCase("0")) {
-                        accessedDocument.add(nd);
-                    }
-                }
-            }
+
         }
         return accessedDocument;
     }
+
 
     @Override
     public List<NodeDocument> getDocumentByUuid(String username, Long uuid) {
         Optional<NodeDocument> document = documentRepository.findById(uuid);
         List<NodeDocument> accessedDocument = new ArrayList<NodeDocument>();
-        List<String> userRoles = userRole.getRole(username);
-        List<DocumentAccess> da = roleService.getAccessByuuid(document.get().getUuid());
-        for (DocumentAccess documentAccess : da) {
-            if (userRoles.contains(documentAccess.getRole()) && document.get().getIsDeleted().equalsIgnoreCase("0")) {
-                accessedDocument.add(document.get());
-                break;
-            }
+        List<String> metaList = getMappedUser.getMappedUser(username);
+        DocMetaMap metaId = documentMetaService.findByDocId(uuid);
+        int metaDataId = metaId.getMetaDataId();
+        if(metaList.contains(String.valueOf(metaDataId))){
+            accessedDocument.add(document.get());
         }
         return accessedDocument;
     }

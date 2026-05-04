@@ -38,19 +38,18 @@ public class RecycleServiceImpl implements RecycleService {
 
     @Override
     public List<RecycledDocument> getAllDeletedDocument(String username) {
-//        List<RecycledDocument> allDocuments =  recycleRepository.findAll();
-//        List<RecycledDocument> accessedDocument = new ArrayList<RecycledDocument>();
-//        List<String> userRoles = userRole.getRole(username);
-//        for (RecycledDocument nd : allDocuments) {
-//            List<DocumentAccess> accessRights = roleService.getAccessByuuid(nd.getUuid());
-//            for (DocumentAccess fa : accessRights) {
-//                if (userRoles.contains(fa.getRole())) {
-//                    accessedDocument.add(nd);
-//                }
-//            }
-//        }
-//        return accessedDocument;
-        return null;
+        List<RecycledDocument> allDocuments =  recycleRepository.findAll();
+        List<RecycledDocument> accessedDocument = new ArrayList<RecycledDocument>();
+        List<String> userRoles = userRole.getRole(username);
+        for (RecycledDocument nd : allDocuments) {
+            List<DocumentAccess> accessRights = roleService.getAccessByuuid(nd.getUuid());
+            for (DocumentAccess fa : accessRights) {
+                if (userRoles.contains(fa.getRole())) {
+                    accessedDocument.add(nd);
+                }
+            }
+        }
+        return accessedDocument;
     }
 
     @Override
