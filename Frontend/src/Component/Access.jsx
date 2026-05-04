@@ -20,6 +20,7 @@ const Access = () => {
   const [userList, setUserList] = useState([]);
   const [id, setId] = useState();
   const [metaName, setMetaName] = useState();
+  const [alluserList,setAllUserList] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState();
   const [properties, setProperties] = useState([
     { propName: "", type: null, size: "" }
@@ -50,9 +51,30 @@ const Access = () => {
       updated[index][field] = value;
       setProperties(updated);
     }
-    console.log(updated);
   };
 
+  const getAllUser = async () =>{
+     try {
+      const response = await fetch(
+        `http://localhost:8080/UserService/getUser`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const result = await response.json();
+      setAllUserList(result);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
 
   const getAllMetaData = async () => {
@@ -152,6 +174,7 @@ const Access = () => {
 
   useEffect(() => {
     getAllMetaData();
+    getAllUser();
   }, []);
 
   return (
@@ -316,7 +339,7 @@ const Access = () => {
                           disabled
                           defaultValue={ele.uploadRights}
                           className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm 
-                        bg-gray-100 text-gray-500 cursor-not-allowed focus:outline-none"
+                          bg-gray-100 text-gray-500 cursor-not-allowed focus:outline-none"
                         >
                           <option value="1">Yes</option>
                           <option value="0">No</option>
@@ -328,7 +351,7 @@ const Access = () => {
                           disabled
                           defaultValue={ele.downloadRights}
                           className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm 
-              bg-gray-100 text-gray-500 cursor-not-allowed focus:outline-none"
+                          bg-gray-100 text-gray-500 cursor-not-allowed focus:outline-none"
                         >
                           <option value="1">Yes</option>
                           <option value="0">No</option>
@@ -340,7 +363,7 @@ const Access = () => {
                           disabled
                           defaultValue={ele.readRights}
                           className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm 
-              bg-gray-100 text-gray-500 cursor-not-allowed focus:outline-none"
+                          bg-gray-100 text-gray-500 cursor-not-allowed focus:outline-none"
                         >
                           <option value="1">Yes</option>
                           <option value="0">No</option>
@@ -352,7 +375,7 @@ const Access = () => {
                           disabled
                           defaultValue={ele.deleteRights}
                           className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm 
-              bg-gray-100 text-gray-500 cursor-not-allowed focus:outline-none"
+                          bg-gray-100 text-gray-500 cursor-not-allowed focus:outline-none"
                         >
                           <option value="1">Yes</option>
                           <option value="0">No</option>
@@ -362,7 +385,7 @@ const Access = () => {
                       <div className="w-[20%] gap-4 flex justify-center items-center px-3 py-2">
                         <FontAwesomeIcon
                           icon={faEdit}
-                          onClick={() => { enableModify(`rights-${ele.userId}`) }}
+                          onClick={() => { enableModify(`rights-${ele.userName}`) }}
                           className="cursor-pointer text-lg text-indigo-500 hover:scale-110 transition-transform"
                         />
                       </div>
@@ -375,6 +398,11 @@ const Access = () => {
                 )}
               </div>
             </div>
+          </div>
+          <div className="flex justify-center text-white p-2">
+            <button className="bg-blue-500 p-2 rounded-md"
+              onClick={()=>{console.log(alluserList)}}
+            >Add Rights</button>
           </div>
         </div>
       </div>
