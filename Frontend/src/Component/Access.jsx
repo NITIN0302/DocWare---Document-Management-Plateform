@@ -8,6 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Select from "react-select";
 import CustomAlert from "../SubComponent/Customealert";
+import AddAccessRights from "../SubComponent/AddAccessRights";
 
 const Access = () => {
   const [metaList, setMetaList] = useState([]);
@@ -20,11 +21,11 @@ const Access = () => {
   const [userList, setUserList] = useState([]);
   const [id, setId] = useState();
   const [metaName, setMetaName] = useState();
-  const [alluserList,setAllUserList] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState();
   const [properties, setProperties] = useState([
     { propName: "", type: null, size: "" }
   ]);
+  const [addAcceess, setAddAccess] = useState({});
   const option = [{ "value": "String", label: "String" },
   { "value": "Int", label: "Integer" },
   { "value": "Date ", label: "Timestamp" }];
@@ -53,29 +54,6 @@ const Access = () => {
     }
   };
 
-  const getAllUser = async () =>{
-     try {
-      const response = await fetch(
-        `http://localhost:8080/UserService/getUser`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const result = await response.json();
-      setAllUserList(result);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
 
   const getAllMetaData = async () => {
     try {
@@ -101,7 +79,6 @@ const Access = () => {
   };
 
   const getAllUserMapped = async (id) => {
-    console.log(id);
     try {
       const response = await fetch(
         `http://localhost:8085/AccessService/getMetaMapUser/${id}`,
@@ -117,7 +94,6 @@ const Access = () => {
       }
       const result = await response.json();
       setUserList([...result]);
-      console.log(result);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -171,10 +147,8 @@ const Access = () => {
     }
   }
 
-
   useEffect(() => {
     getAllMetaData();
-    getAllUser();
   }, []);
 
   return (
@@ -399,10 +373,12 @@ const Access = () => {
               </div>
             </div>
           </div>
-          <div className="flex justify-center text-white p-2">
+          <div id="accessRightsDiv" >
+            <AddAccessRights id={id}/>
+          </div>
+          <div className="flex justify-end text-white p-2">
             <button className="bg-blue-500 p-2 rounded-md"
-              onClick={()=>{console.log(alluserList)}}
-            >Add Rights</button>
+              >Add Rights</button>
           </div>
         </div>
       </div>

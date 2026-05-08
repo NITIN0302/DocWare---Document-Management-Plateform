@@ -82,7 +82,7 @@ public class DocumentServiceImpl implements DocumentService {
     public List<NodeDocument> getDocument(String username, Long parentId) {
         List<NodeDocument> allDocument = documentRepository.getDocumentByParentId(parentId);
         List<NodeDocument> accessedDocument = new ArrayList<NodeDocument>();
-        List<String> userRoles = userRole.getRole(username);
+//        List<String> userRoles = userRole.getRole(username);
         if (username.equalsIgnoreCase("admin")) {
             return allDocument;
         } else {
