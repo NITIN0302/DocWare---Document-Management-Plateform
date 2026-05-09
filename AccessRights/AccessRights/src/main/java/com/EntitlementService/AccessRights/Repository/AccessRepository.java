@@ -14,7 +14,7 @@ public interface AccessRepository extends JpaRepository<MetaData,Integer> {
     @Query("SELECT new com.EntitlementService.AccessRights.Pojo.MetaDataDTO(m.name,m.id) FROM MetaData m")
     public List<MetaDataDTO> getAllmetaData();
 
-    @Query("SELECT m FROM MetaUserMapping m JOIN FETCH m.metaData where m.id=:id")
+    @Query("SELECT m FROM MetaUserMapping m JOIN FETCH m.metaData where m.metaData.id=:id")
     List<MetaUserMapping> getAllWithMetadata(@Param("id")int id);
 
     public MetaData findByName(String name);

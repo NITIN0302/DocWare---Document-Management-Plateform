@@ -11,4 +11,5 @@ public interface AccessService {
     public void createMetadata(MetaData metaData);
     public List<MetaDataDTO> getAllmetaData();
     public List<MetaUserMapping> getAllMetaMapUser(int id);
+    public MetaData findByName(String name);
 }

@@ -47,4 +47,8 @@ public class AccessServiceImpl implements AccessService {
     public List<MetaUserMapping> getAllMetaMapUser(int id){
         return accessRepository.getAllWithMetadata(id);
     }
+
+    public MetaData findByName(String name){
+        return accessRepository.findByName(name);
+    }
 }
