@@ -20,6 +20,7 @@ const Access = () => {
   const [error, setError] = useState(null);
   const [userList, setUserList] = useState([]);
   const [id, setId] = useState();
+  const [accessRights, setAccessRights] = useState('hidden');
   const [metaName, setMetaName] = useState();
   const [selectedOptions, setSelectedOptions] = useState();
   const [properties, setProperties] = useState([
@@ -366,20 +367,23 @@ const Access = () => {
                     </div>
                   ))
                 ) : (
-                  <div className="text-center text-gray-400 py-10 font-medium">
+                  <div className="text-center text-gray-400 py-5 font-medium">
                     No Users Found
                   </div>
                 )}
+                <div className={`${accessRights}`}>
+                  <AddAccessRights id={id} />
+                </div>
+                <div className="bg-gradient-to-r py-1 from-indigo-500 to-blue-500 w-full flex justify-center text-white">
+                  <button className="cursor-pointer text-sm font-medium hover:scale-105 transition-transform"
+                    onClick={() => setAccessRights('visible')}
+                  >Add Rights</button>
+                </div>
               </div>
             </div>
           </div>
-          <div id="accessRightsDiv" >
-            <AddAccessRights id={id}/>
-          </div>
-          <div className="flex justify-end text-white p-2">
-            <button className="bg-blue-500 p-2 rounded-md"
-              >Add Rights</button>
-          </div>
+          
+
         </div>
       </div>
     </>
